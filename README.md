@@ -1,20 +1,3 @@
-<style>
-    body{
-        font-family: "Fira Code";
-    }
-    tr, th{
-        display: flex;
-        width:100%;
-    }
-    td {
-        flex:1;
-    }
-    td:first-child {
-        font-weight: bold;
-        font-size: 16px;
-    }
-</style>
-
 # 👋🏼 Hello World  🌎
 
 I am **Mattia Collalti** a senior software developer working remotely with **8+ years of experience** in international environments and with the most modern **Agile** methodologies - **SCRUM, Kanban**!
