@@ -1,4 +1,4 @@
-# 👋🏼 Hello World  🌎
+# 👋🏼 Hi there!  🌎
 
 I am **Mattia Collalti** a senior software developer working remotely with **8+ years of experience** in international environments and with the most modern **Agile** methodologies - **SCRUM, Kanban**!
 
