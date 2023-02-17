@@ -1,6 +1,6 @@
 # 🧞‍♂️ Hi there!
 
-I am **Mattia Collalti** an awesome Senior Software Developer working remotely with **8+ years of experience** in international environments and with the most modern **Agile** methodologies!
+I am **Mattia Collalti** an awesome **Senior Software Developer** working remotely with **8+ years of experience** in international environments and with the most modern **Agile** methodologies!
 
 #### <ins>At the moment I am looking for new missions!!! If you have any positions to propose, do not hesitate to contact me at collalti.mattia@gmail.com</in>
 
