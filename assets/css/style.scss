@@ -4,5 +4,9 @@
 @import "{{ site.theme }}";
 
 .btn {
-    border: white 2px solid;
+    border: rgba(255,255,255,0.8) 2px solid;
+    > a {
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+    }
 }
