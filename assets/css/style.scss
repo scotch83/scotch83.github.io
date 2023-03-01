@@ -3,7 +3,7 @@
 
 @import "{{ site.theme }}";
 a{
-    color: rgba(255,255,255,0.8);
+    color: inherit;
     font-weight: bold;
     text-decoration: none;
 }
