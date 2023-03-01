@@ -5,10 +5,8 @@
 a{
     color: rgba(255,255,255,0.8);
     font-weight: bold;
+    text-decoration: none;
 }
 .btn {
-    border: rgba(255,255,255,0.8) 2px solid;
-    > a {
-        text-decoration: none;
-    }
+    border: rgba(255,255,255,0.8) 1px solid;
 }

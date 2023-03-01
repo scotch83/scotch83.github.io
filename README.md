@@ -4,7 +4,7 @@ I am **Mattia Collalti** an awesome **Senior Software Developer** working remote
 
 #### <ins>At the moment I am looking for new missions!!! If you have any positions to propose, do not hesitate to contact me at <a href="emailto:collalti.mattia@gmail.com">collalti.mattia@gmail.com</a></ins>
 
-<button name="button" class="btn" onclick="https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link">[⇩ Download my CV here ⇩](https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link)</button>
+<a class="btn" href="https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link" target="_blank">⇩ Download my CV here ⇩</a>
 
 ## 👨🏻‍💼 About me
 
