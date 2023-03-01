@@ -2,7 +2,7 @@
 
 I am **Mattia Collalti** an awesome **Senior Software Developer** working remotely with **8+ years of experience** in international environments and with the most modern **Agile** methodologies!
 
-#### <ins>At the moment I am looking for new missions!!! If you have any positions to propose, do not hesitate to contact me at collalti.mattia@gmail.com</in>
+#### <ins>At the moment I am looking for new missions!!! If you have any positions to propose, do not hesitate to contact me at collalti.mattia@gmail.com</ins>
 
 <button name="button" onclick="https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link">[Download my CV here](https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link)</button>
 
