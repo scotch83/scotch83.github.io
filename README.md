@@ -4,9 +4,11 @@ I am **Mattia Collalti** an awesome **Senior Software Developer** working remote
 
 #### <ins>At the moment I am looking for new missions!!! If you have any positions to propose, do not hesitate to contact me at collalti.mattia@gmail.com</in>
 
-## 👨🏻‍💼 About me 
+<button name="button" onclick="https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link">Download my CV here</button>
 
-I am mainly focused on 🧑🏻‍💻 **front-end, mobile development and team leading**, with technologies such as **Angular, Ionic** and **Xamarin**, as this is my main expertise, but I also have an extensive experience and knowledge to be suitable for other positions as frontend developer - with frameworks as **React.js** or **Vue.js** - or as fullstack - **Node.js** or **.NET**. 
+## 👨🏻‍💼 About me
+
+I am mainly focused on 🧑🏻‍💻 **front-end, mobile development and team leading**, with technologies such as **Angular, Ionic** and **Xamarin**, as this is my main expertise, but I also have an extensive experience and knowledge to be suitable for other positions as frontend developer - with frameworks as **React.js** or **Vue.js** - or as fullstack - **Node.js** or **.NET**.
 
 My hobbies are music and **sailing** ⛵️
 
