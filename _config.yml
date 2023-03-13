@@ -2,5 +2,8 @@ remote_theme: pages-themes/hacker@v0.2.0
 plugins:
 - jekyll-remote-theme
 title: Mattia Collalti
+author: Mattia Collalti
+name: The artisan
+url: http://scotch83.github.io
 description: My Github Pages powered website
 show_downloads: false
