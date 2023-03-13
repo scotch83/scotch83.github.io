@@ -1,5 +1,6 @@
 ---
-title: "Angular application architectures"
+layout: post
+title: "programming-angular-architectures"
 date: 2023-03-13
 ---
 
@@ -31,7 +32,6 @@ It means they are potentially portable to any other code base, even a react appl
 #### Directives
 
 Directive are quite a broad topic. If you consider that even components are directives, it's already confusing enough. They are also a pretty strict Angular features and are mainly divided in two big groups: structural and attribute directives. They both basically interact with the DOM, but the first being one that is changind its structure, the second behing one changing the appearance or behavior.
-
 
 ### Conclusion
 
