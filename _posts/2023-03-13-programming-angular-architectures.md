@@ -1,14 +1,18 @@
 ---
 layout: post
-title: "programming-angular-architectures"
+title: "Programming Angular Architectures"
+excerpt_separator: <!--more-->
+tags: angular fundamentals architecture
 date: 2023-03-13
 ---
 
 ## Angular applications fundamentals
 
 Angular applications are a great innovation in web development. They allow for a better architecture and separation of concerns, when it comes to managing your files.
+<!--more-->
 
 They do set a clear boundary between HTML, CSS and TypeScript, allowing developers to focus on what matters.
+
 
 ### Components, Modules, Services and Directives
 

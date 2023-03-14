@@ -1,4 +1,4 @@
-remote_theme: pages-themes/hacker@v0.2.0
+theme: beautiful-jekyll-theme
 plugins:
 - jekyll-remote-theme
 - jekyll-feed
@@ -7,4 +7,38 @@ author: Mattia Collalti
 name: The artisan
 url: http://scotch83.github.io
 description: My Github Pages powered website
-show_downloads: false
+avatar: "/assets/images/avatar.png"
+css:
+  - "/assets/css/style.scss"
+navbar-links:
+  Blog: "posts"
+  Resources:
+    - Angular IO: "https://angular.io/"
+    - RxJS: "https://rxjs.dev/"
+    - Ionic: "https://ionic.io/"
+    - Xamarin: "https://dotnet.microsoft.com/en-us/apps/xamarin"
+    - Redux Files Generator: "https://marketplace.visualstudio.com/items?itemName=scotch-development.redux-files-generator"
+social-network-links:
+  email: "collalti.mattia@gmail.com"
+  rss: true  # remove this line if you don't want to show an RSS link at the bottom
+  github: scotch83
+  linkedin: mattiacollalti
+#  medium: yourname
+#  reddit: yourname
+#  xing: yourname
+#  stackoverflow: "3943160/daattali"
+#  snapchat: deanat78
+#  instagram: deanat78
+#  spotify: yourname
+  telephone: +393517274140
+#  steam: deanat78
+#  twitch: yourname
+#  yelp: yourname
+#  telegram: yourname
+#  calendly: yourname
+#  mastodon: instance.url/@username
+#  ORCID: your ORCID ID
+#  google-scholar: your google scholar
+#  discord: invite/invite_code or users/userid
+#  kaggle: yourname
+  hackerrank: collalti_mattia

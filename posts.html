@@ -1,0 +1,16 @@
+---
+layout: page
+---
+<div class="container d-flex h-100">
+    <section id="main_content">
+        {% for post in site.posts limit:6 %}
+        <div class="card mb-5">
+            <a href="{{ post.url }}"
+               class="btn">
+
+                {{ post.excerpt }}
+            </a>
+        </div>
+        {% endfor %}
+    </section>
+</div>
