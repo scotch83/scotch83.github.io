@@ -42,14 +42,17 @@
                     <a href="{{ site.github.repository_url }}"
                        class="btn btn-github"><span class="icon"></span>View on GitHub</a>
                     <a class="btn"
-                       href="/blog"
-                       target="_blank">Blog</a>
+                       href="/"
+                       target="_blank">Home</a>
+                    <a class="btn btn-rss"
+                       href="/feed.xml"
+                       target="_blank">Blog feed</a>
                 </section>
             </div>
         </header>
 
         <div class="container d-flex">
-            <aside>
+            <section id="main_content">
                 <ul>
                     {% for post in site.posts limit:6 %}
                     <li>
@@ -57,9 +60,6 @@
                     </li>
                     {% endfor %}
                 </ul>
-            </aside>
-            <section id="main_content">
-                {{ content }}
             </section>
         </div>
     </body>
