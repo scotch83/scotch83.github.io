@@ -5,7 +5,7 @@ excerpt_separator: <!--more-->
 tags: angular redux vscode plugins
 #thumbnail-img: assets/images/redux-vscode-logos-cross.svg
 cover-img: assets/images/redux-vscode-logos-cross.svg
-date: 2023-03-15
+date: 2023-03-14
 ---
 
 ## Angular 2 Redux Files Generator
@@ -77,12 +77,15 @@ ngReduxGen.config = {
 ## Release Notes
 
 #### 0.0.1
+
 First release of this extension (my first extension for VS code)
 
 #### 0.0.2
+
 Update package.json file for better VS code marketplace integration
 
 #### 0.0.3
+
 Update README
 
 -----------------------------------------------------------------------------------------------------------
