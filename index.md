@@ -1,25 +1,21 @@
 ---
+title: The artisan | Who's he?
+cover-img: /assets/images/optical.gif
 permalink: /index.html
-layout: home
+layout: page
 tags: mattia collalti frontend mobile backend node angular ionic xamarin software developer
 ---
-# 🧞‍♂️ Hi there! 🖖🏼
-
 I am **Mattia Collalti** a **Senior Software Developer** working remotely with **{{ site.time | date: '%Y' | minus:2015 }} years and more of experience** in international environments and with the most modern **Agile** methodologies!
+I like to define me rather as a modern artisan, hence the web page name
 
-#### <ins>At the moment I am looking for new missions!!! If you have any positions to propose, do not hesitate to contact me at <a href="emailto:collalti.mattia@gmail.com">collalti.mattia@gmail.com</a></ins>
+I am mainly focused on 🧑🏻‍💻 **front-end, mobile development and team leading**, with technologies such as **Angular, Ionic** and **Xamarin**, as
+my main expertise, but I also have an extensive knowledge suitable in positions as frontend developer using frameworks as **React.js** - or fullstack techs like **Node.js and Express.js**, or even **.NET**.
 
-<a class="btn" href="https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link" target="_blank">⇩ Download my CV here ⇩</a>
+My hobbies are music and **sailing** _⛵️_ <img align="right" class="sailing-img" style="margin: 0 20px" height="150" src="/assets/images/prodiere.jpeg">
 
-## 👨🏻‍💼 About me
+This makes me a **great team player**, always able to _coordinate and deliver work succesfully_, **helping my colleagues** when needed!
 
-I am mainly focused on 🧑🏻‍💻 **front-end, mobile development and team leading**, with technologies such as **Angular, Ionic** and **Xamarin**, as this is my main expertise, but I also have an extensive experience and knowledge to be suitable for other positions as frontend developer - with frameworks as **React.js** or **Vue.js** - or as fullstack - **Node.js** or **.NET**.
-
-My hobbies are music and **sailing** ⛵️
-
-This makes me a great team player, always able to coordinate and deliver work succesfully, while helping my colleagues where needed!
-
-## 🃏 Aces up my sleeve
+## <span class="drop-shadow">🃏 The aces up my sleeve</span>
 
 * Angular front-end development
 * Ionic/Angular team leading, management & software development

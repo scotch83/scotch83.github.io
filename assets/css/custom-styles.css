@@ -1,0 +1,18 @@
+.container-md a:hover {
+  filter: drop-shadow(1px 1px 1px black);
+}
+.blog-tags a:hover {
+  filter: unset;
+}
+.drop-shadow {
+  filter: drop-shadow(2px 2px 1px #999);
+}
+.sailing-img {
+  border-radius: 50%;
+  border: solid white 2px;
+  padding: 2px;
+  filter: drop-shadow(2px 2px 1px #999) saturate(1);
+}
+.navbar-title{
+  flex-grow: 1;
+}

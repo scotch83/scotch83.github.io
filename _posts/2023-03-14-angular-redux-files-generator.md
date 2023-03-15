@@ -1,9 +1,11 @@
 ---
 layout: post
-title: "Redux files generator for Angular"
+title: "Redux files generator plugin for VSCode"
 excerpt_separator: <!--more-->
 tags: angular redux vscode plugins
-date: 2023-03-13
+#thumbnail-img: assets/images/redux-vscode-logos-cross.svg
+cover-img: assets/images/redux-vscode-logos-cross.svg
+date: 2023-03-15
 ---
 
 ## Angular 2 Redux Files Generator

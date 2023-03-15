@@ -1,17 +1,20 @@
-remote_theme: daattali/beautiful-jekyll@5.0.0
+remote_theme: daattali/beautiful-jekyll
 plugins:
 - jekyll-remote-theme
 - jekyll-feed
-title: Mattia Collalti
+title: The Artisan
 author: Mattia Collalti
 name: The artisan
 url: http://scotch83.github.io
 description: My Github Pages powered website
-avatar: "/assets/images/avatar.png"
-css:
-  - "/assets/css/style.scss"
+avatar: "/assets/images/profile-pic.png"
+navbar-col: "#ffffff"
+navbar-text-col: "#404040"
 navbar-links:
   Blog: "posts"
+  Get in touch:
+    - Mail me: "mailto:collalti.mattia@gmail.com"
+    - Download My CV: "https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link"
   Resources:
     - Angular IO: "https://angular.io/"
     - RxJS: "https://rxjs.dev/"
@@ -23,6 +26,8 @@ social-network-links:
   rss: true  # remove this line if you don't want to show an RSS link at the bottom
   github: scotch83
   linkedin: mattiacollalti
+  hackerrank: collalti_mattia
+  telephone: +393517274140
 #  medium: yourname
 #  reddit: yourname
 #  xing: yourname
@@ -30,7 +35,6 @@ social-network-links:
 #  snapchat: deanat78
 #  instagram: deanat78
 #  spotify: yourname
-  telephone: +393517274140
 #  steam: deanat78
 #  twitch: yourname
 #  yelp: yourname
@@ -41,4 +45,23 @@ social-network-links:
 #  google-scholar: your google scholar
 #  discord: invite/invite_code or users/userid
 #  kaggle: yourname
-  hackerrank: collalti_mattia
+share-links-active:
+  twitter: true
+  facebook: true
+  linkedin: true
+  vk: false
+fb_comment_id: "709733597601870"
+site-css:
+  - "/assets/css/custom-styles.css"
+post_search: true
+
+# Excerpt word length - Truncate the excerpt of each post on the feed page to the specified number of words
+excerpt_length: 50
+
+# Whether or not to show an excerpt for every blog post in the feed page
+feed_show_excerpt: true
+
+# Whether or not to show a list of tags below each post preview in the feed page
+feed_show_tags: true
+hover-col: "#c4d4c9"
+title-img: /assets/images/favicons/safari-pinned-tab.svg
