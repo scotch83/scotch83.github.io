@@ -5,7 +5,7 @@ plugins:
 title: The Artisan
 author: Mattia Collalti
 name: The artisan
-url: http://scotch83.github.io
+url: https://scotch83.github.io
 description: My Github Pages powered website
 avatar: "/assets/images/profile-pic.png"
 navbar-col: "#ffffff"
