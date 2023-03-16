@@ -7,6 +7,12 @@ tags: angular redux vscode plugins
 cover-img: assets/images/redux-vscode-logos-cross.svg
 date: 2023-03-14
 comments: true
+gh-repo: scotch83/ng-redux-file-generator
+gh-badge:
+    - star
+    - watch
+    - fork
+    - follow
 ---
 
 ## Angular 2 Redux Files Generator
