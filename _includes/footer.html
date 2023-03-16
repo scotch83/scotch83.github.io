@@ -1,0 +1,59 @@
+<footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div
+           class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 d-flex flex-column align-items-center justify-content-center">
+        {% include social-networks-links.html %}
+        {% if page.footer-extra %}
+        <div class="footer-custom-content">
+          {% for file in page.footer-extra %}
+          {% include {{ file }} %}
+          {% endfor %}
+        </div>
+        {% endif %}
+        <a href="https://www.iubenda.com/privacy-policy/89368349"
+           class="iubenda-white iubenda-noiframe iubenda-embed iubenda-noiframe align-self-center"
+           style="margin: 1em auto !important;"
+           title="Privacy Policy ">Privacy Policy</a>
+        <p class="copyright text-muted">
+          {% if site.author %}
+          {{ site.author }}
+          &nbsp;&bull;&nbsp;
+          {% endif %}
+          {{ site.time | date: '%Y' }}
+
+          {% if site.url-pretty %}
+          &nbsp;&bull;&nbsp;
+          <span class="author-site">
+            <a
+               href="{% if site.url-canonical %}{{ site.url-canonical }}{% else %}{{ '' | absolute_url }}{% endif %}">{{ site.url-pretty }}</a>
+          </span>
+          {% endif %}
+
+          {% if site.matomo %}
+          {% if site.matomo.opt-out %}
+          &nbsp;&bull;&nbsp;
+          <a href="http://{{- site.matomo.uri -}}/index.php?module=CoreAdminHome&action=optOut"
+             target="_blank"
+             class="text_muted">Do-not-Track</a>
+          {% endif %}
+          {% endif%}
+
+          {% if site.edit_page_button and site.github.repository_url %}
+          &nbsp;&bull;&nbsp;
+          <a title="Edit this page on GitHub"
+             href="{{ site.github.repository_url }}/edit/{{ site.github.source.branch }}/{{ page.path }}"
+             class="text_muted">Edit page</a>
+          {% endif%}
+
+        </p>
+        {% unless site.remove-ads %}<p class="theme-by text-muted">
+          Powered by
+          <a href="https://beautifuljekyll.com">Beautiful Jekyll</a>
+        </p>{% endunless %}
+      </div>
+    </div>
+    <script
+            type="text/javascript">(function (w, d) { var loader = function () { var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s, tag); }; if (w.addEventListener) { w.addEventListener("load", loader, false); } else if (w.attachEvent) { w.attachEvent("onload", loader); } else { w.onload = loader; } })(window, document);</script>
+  </div>
+</footer>
