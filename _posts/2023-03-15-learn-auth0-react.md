@@ -9,6 +9,7 @@ tags: react auth0 authentication authorization jwt third-party-identity-provider
 date: 2023-03-15
 thumbnail-img: assets/images/logo-auth0-colored.svg
 cover-img: assets/images/logo-auth0.svg
+comments: true
 ---
 
 Auth0 is a great tool and `SaaS` platform for identity and user's management. Let's discuss how to integrate it in our application.

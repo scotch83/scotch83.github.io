@@ -5,6 +5,7 @@ excerpt_separator: <!--more-->
 tags: angular fundamentals architecture
 cover-img: assets/images/angular.svg
 date: 2023-03-13
+comments: true
 ---
 
 ## Angular applications fundamentals
