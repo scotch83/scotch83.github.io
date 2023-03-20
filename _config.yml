@@ -50,6 +50,7 @@ share-links-active:
   facebook: true
   linkedin: true
   vk: false
+fb_app_id: 709733597601870
 fb_comment_id: 709733597601870
 site-css:
   - "/assets/css/custom-styles.css"
