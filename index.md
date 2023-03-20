@@ -1,8 +1,7 @@
 ---
 title: The artisan | Who's he?
 cover-img: /assets/images/optical.gif
-share-title: <b><i>The Artisan</i></b>
-share-img: /assets/images/profile-pic.png
+share-title: "<b><i>The Artisan</i></b>"
 share-description: "<b>Mattia Collalti</b> ⛵️ Freelance Software Craftsman, Passionated Sailor"
 permalink: /index.html
 layout: page
