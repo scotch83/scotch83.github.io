@@ -1,8 +1,8 @@
 ---
 title: The artisan | Who's he?
 cover-img: /assets/images/optical.gif
-share-title: "<b><i>The Artisan</i></b>"
-share-description: "<b>Mattia Collalti</b> ⛵️ Freelance Software Craftsman, Passionated Sailor"
+share-title: "Mattia Collalti - The Artisan"
+share-description: "🧑🏻‍💻 Mattia Collalti - Freelance Software Craftsman and Passionated Sailor ⛵️"
 permalink: /index.html
 layout: page
 tags: mattia collalti frontend mobile backend node angular ionic xamarin software developer
