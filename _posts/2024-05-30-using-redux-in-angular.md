@@ -5,7 +5,7 @@ subtitle: "How Redux works and what are the advantages of using a Redux Store as
 date: 2024-05-30
 excerpt_separator: <!--more-->
 tags: angular redux architecture
-cover-img: assets/images/redux-vscode-logos-cross.svg
+cover-img: assets/images/redux-angular.svg
 comments: true
 ---
 
@@ -35,7 +35,6 @@ Start by installing the required Redux libraries. The most commonly used ones ar
 ```bash
 npm install @ngrx/store @ngrx/effects
 ```
-
 
 ### 2. Define Actions
 
