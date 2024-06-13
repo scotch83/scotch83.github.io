@@ -12,6 +12,10 @@ layout: none
 			<item>
 				<title>{{ post.title | xml_escape }}</title>
 				<description>{{ post.content | xml_escape }}</description>
+				<hashtags>
+				{% for tag in post.tags %}
+				#{{ tag | xml_escape }}
+				{% endfor %}</hashtags>
 				<pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
 				<link>{{ site.url }}{{ post.url }}</link>
 				<guid isPermaLink="true">{{ site.url }}{{ post.url }}</guid>
