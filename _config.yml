@@ -13,14 +13,16 @@ navbar-text-col: "#404040"
 navbar-links:
   Blog: "posts"
   Get in touch:
-    - Mail me: "mailto:collalti.mattia@gmail.com"
-    - Download My CV: "https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link"
+    - Github: ["https://github.com/scotch83", "fab fa-github"]
+    - LinkedIn: ["https://www.linkedin.com/in/mattiacollalti", "fab fa-linkedin"]
+    - Mail me: ["mailto:collalti.mattia@gmail.com", "far fa-paper-plane"]
+    - Curriculum Vitae: ["https://drive.google.com/file/d/1yHlGwwjdvH7AX8Mcy695v25DG4ztyw8Z/view?usp=share_link", "far fa-file-alt"]
   Resources:
-    - Angular IO: "https://angular.io/"
-    - RxJS: "https://rxjs.dev/"
-    - Ionic: "https://ionic.io/"
-    - Xamarin: "https://dotnet.microsoft.com/en-us/apps/xamarin"
-    - Redux Files Generator: "https://marketplace.visualstudio.com/items?itemName=scotch-development.redux-files-generator"
+    - Angular IO: ["https://angular.io/"]
+    - RxJS: ["https://rxjs.dev/"]
+    - Ionic: ["https://ionic.io/"]
+    - Xamarin: ["https://dotnet.microsoft.com/en-us/apps/xamarin"]
+    - Redux Files Generator: ["https://marketplace.visualstudio.com/items?itemName=scotch-development.redux-files-generator"]
 social-network-links:
   email: "collalti.mattia@gmail.com"
   rss: true  # remove this line if you don't want to show an RSS link at the bottom

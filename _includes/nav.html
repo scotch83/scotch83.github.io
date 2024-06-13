@@ -38,8 +38,10 @@
                      aria-labelledby="navbarDropdown">
                     {%- for childlink in link[1] -%}
                     {%- for linkparts in childlink %}
-                    <a class="dropdown-item"
-                       href="{{ linkparts[1] | relative_url }}">{{ linkparts[0] }}</a>
+                    <div class="dropdown-item">
+                        {%- if linkparts[1][1] %}<i class="{{linkparts[1][1]}}"></i>{%- endif -%}
+                        <a href="{{ linkparts[1][0] | relative_url }}">{{ linkparts[0] }}</a>
+                    </div>
                     {%- endfor -%}
                     {%- endfor %}
                 </div>

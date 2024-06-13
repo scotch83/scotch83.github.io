@@ -16,3 +16,14 @@
 .navbar-title{
   flex-grow: 1;
 }
+.dropdown-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dropdown-item a{
+  color: inherit;
+}
+.dropdown-item i{
+  margin-right: 5px;
+}
