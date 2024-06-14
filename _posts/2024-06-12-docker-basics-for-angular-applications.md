@@ -1,5 +1,6 @@
 ---
 cover-img: assets/images/docker-angular.svg
+linkedin-img: assets/images/docker-angular.png
 layout: post
 excerpt_separator: <!--more-->
 title: "Creating a Docker Image for Angular applications"
