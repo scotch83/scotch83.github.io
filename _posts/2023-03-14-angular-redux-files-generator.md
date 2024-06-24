@@ -15,8 +15,6 @@ gh-badge:
     - follow
 ---
 
-## Angular 2 Redux Files Generator
-
 This is an Angular 2 Redux files generator that I developed a long time ago in the context of a project, for my needs.
 
 <!--more-->

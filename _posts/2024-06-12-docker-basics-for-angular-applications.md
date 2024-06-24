@@ -9,8 +9,6 @@ tags: docker angular
 comments: true
 ---
 
-# Creating a Docker Image for Angular applications
-
 Docker is a powerful tool that allows developers to package applications and their dependencies into a portable container<!--more-->, ensuring consistency across different environments.
  In this post, we’ll walk through the steps to create a basic Docker image for an Angular web application and serve it locally.
 

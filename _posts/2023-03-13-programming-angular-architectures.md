@@ -8,8 +8,6 @@ date: 2023-03-13
 comments: true
 ---
 
-## Angular applications fundamentals
-
 Angular applications are a great innovation in web development. They allow for a better architecture and separation of concerns, when it comes to managing your files.
 <!--more-->
 
