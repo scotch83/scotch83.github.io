@@ -23,12 +23,11 @@ One of the powerful features of Capacitor is the ability to extend its functiona
 
 Before we start, ensure you have the following installed:
 
-- Node.js (>= 12.x)
-- npm (Node Package Manager)
-- Capacitor CLI (`npm install -g @capacitor/cli`)
-- A basic understanding of JavaScript/TypeScript
-- Android Studio for Android development
-- XCode and the command line tools for iOS development
+* A basic understanding of JavaScript/TypeScript
+* [Node.js](https://nodejs.org/en/download/package-manager) (>= 12.x) and npm (Node Package Manager)
+* Capacitor CLI (`npm install -g @capacitor/cli`)
+* [Android Studio](https://developer.android.com/studio) for Android development
+* [XCode](https://developer.apple.com/xcode/) and the **command line tools**(`xcode-select --install`) for iOS development
 
 ## Step-by-Step Guide
 
