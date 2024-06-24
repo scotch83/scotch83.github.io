@@ -3,7 +3,7 @@ layout: post
 title: "Creating a Capacitor NFCPlugin"
 date: 2024-06-24
 excerpt_separator: <!--more-->
-cover-img: assets/images/cap-angular.svg
+cover-img: assets/images/cap-angular-hd.png
 linkedin-img: assets/images/cap-angular.png
 gh-repo: scotch83/capacitor-plugin-nfc
 gh-badge:
