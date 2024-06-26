@@ -5,7 +5,7 @@ date: 2024-06-26
 excerpt_separator: <!--more-->
 cover-img: assets/images/python.svg
 linkedin-img: assets/images/python.png
-tags: python solid-programming clean-code uncle-bob
+tags: python solidprogramming cleancode unclebob
 comments: true
 css:
 - "/assets/css/python.css"
