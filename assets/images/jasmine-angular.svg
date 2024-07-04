@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="275.55072"
+   height="192"
+   viewBox="0 0 275.55074 192"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="jasmine-angular.svg"
+   inkscape:version="1.3 (0e150ed, 2023-07-21)"
+   inkscape:export-filename="jasmine-angular.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="3.3813096"
+     inkscape:cx="63.584832"
+     inkscape:cy="90.941096"
+     inkscape:window-width="1840"
+     inkscape:window-height="1052"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="jasmine-white-horizontal-copy" />
+  <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+  <title
+     id="title1">jasmine-white-horizontal copy</title>
+  <desc
+     id="desc1">Created with Sketch.</desc>
+  <defs
+     id="defs1">&#10;	&#10;	&#10;	&#10;<filter
+   style="color-interpolation-filters:sRGB"
+   inkscape:label="Drop Shadow"
+   id="filter85"
+   x="-0.022371418"
+   y="-0.027934857"
+   width="1.0374251"
+   height="1.0497969">
+  <feFlood
+     result="flood"
+     in="SourceGraphic"
+     flood-opacity="0.827451"
+     flood-color="rgb(122,21,110)"
+     id="feFlood84" />
+  <feGaussianBlur
+     result="blur"
+     in="SourceGraphic"
+     stdDeviation="0.600000"
+     id="feGaussianBlur84" />
+  <feOffset
+     result="offset"
+     in="blur"
+     dx="-0.700000"
+     dy="-0.400000"
+     id="feOffset84" />
+  <feComposite
+     result="comp1"
+     operator="in"
+     in="flood"
+     in2="offset"
+     id="feComposite84" />
+  <feComposite
+     result="comp2"
+     operator="over"
+     in="SourceGraphic"
+     in2="comp1"
+     id="feComposite85" />
+</filter>
+</defs>
+  <g
+     id="Page-1"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     transform="translate(-11.419421,-19.367269)">
+    <g
+       id="jasmine-white-horizontal-copy"
+       fill="#FFFFFF"
+       fill-rule="nonzero"
+       style="fill:#8a4182;fill-opacity:1">
+      <g
+         id="g62"
+         transform="matrix(2.7766718,0,0,2.7766718,87.275655,208.4531)"
+         style="filter:url(#filter85)">
+        <g
+           id="g3-3"
+           transform="rotate(-45,-74.259166,42.118125)"
+           style="mix-blend-mode:luminosity;fill:#8a4182;fill-opacity:1">
+          <g
+             id="logo-9"
+             transform="translate(2.2269063,18.169227)"
+             style="fill:#8a4182;fill-opacity:1">
+            <g
+               transform="matrix(1,0,0,-1,0,57)"
+               id="g2"
+               style="fill:#8a4182;fill-opacity:1">
+              <polyline
+                 id="path36-8"
+                 points="26.2168495 33.284074 30.6154464 33.284074 31.7080918 34.7883214 31.7080918 46.5722959 25.1245434 46.5722959 25.1245434 34.7874005 26.2168495 33.284074"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <polyline
+                 id="path38-6"
+                 points="23.3813903 28.0278112 24.7404235 32.2109133 23.6473903 33.7154031 12.4401531 37.3568112 10.405602 31.0953903 21.6144872 27.4535459 23.3813903 28.0278112"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <polyline
+                 id="path40-5"
+                 points="27.5039056 23.7066199 23.9457679 26.2929464 22.1772168 25.7173724 15.2507959 16.1838316 20.5767577 12.3146173 27.5039056 21.8486913 27.5039056 23.7066199"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <polyline
+                 id="path42-7"
+                 points="32.887449 26.2929464 29.3285357 23.7075893 29.3290689 21.848352 36.2552959 12.3146173 41.5818878 16.1838316 34.6543036 25.7182934 32.887449 26.2929464"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <polyline
+                 id="path44-6"
+                 points="32.0909031 32.2120765 33.4507117 28.028199 35.2190689 27.4545153 46.4264031 31.0953903 44.3921429 37.3568112 33.1841301 33.7148214 32.0909031 32.2120765"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <path
+                 d="M 28.41765,56.800306 C 12.75976,56.800306 0.02064796,44.06352 0.02064796,28.407811 0.02064796,12.74648 12.75976,0.0058648 28.41765,0.0058648 c 15.656534,0 28.393804,12.7406152 28.393804,28.4019462 0,15.655709 -12.73727,28.392495 -28.393804,28.392495 z m 0,-5.748954 c 12.503745,0 22.644365,-10.136403 22.644365,-22.643541 0,-12.511354 -10.14062,-22.6520712 -22.644365,-22.6520712 -12.508688,0 -22.6475148,10.1407172 -22.6475148,22.6520712 0,12.507138 10.1388268,22.643541 22.6475148,22.643541 z"
+                 id="path46-2"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <polyline
+                 id="path48-7"
+                 points="45.6159949 22.0963699 37.0964821 24.8649898 37.6601327 26.6005816 46.1792092 23.8319617 45.6159949 22.0963699"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <polyline
+                 id="path50-0"
+                 points="34.7504668 35.7739949 33.2742347 36.8463801 38.5390281 44.0940561 40.015648 43.0219133 34.7504668 35.7739949"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <polyline
+                 id="path52-3"
+                 points="22.1730485 35.8404464 16.9087883 43.0878316 18.3854082 44.1604592 23.6496684 36.9126378 22.1730485 35.8404464"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <polyline
+                 id="path54-9"
+                 points="11.1813061 22.2052321 10.617801 23.9404847 19.1366837 26.707602 19.6999464 24.9723495 11.1813061 22.2052321"
+                 style="fill:#8a4182;fill-opacity:1" />
+              <polygon
+                 id="path56-9"
+                 points="27.447681,19.262026 27.447681,10.304107 29.272098,10.304107 29.272098,19.262026 "
+                 style="fill:#8a4182;fill-opacity:1" />
+            </g>
+          </g>
+        </g>
+        <g
+           id="g31"
+           transform="translate(-31.721838,-78.546736)"
+           style="mix-blend-mode:lighten">
+          <polygon
+             class="st0"
+             points="125,230 203.9,186.3 218.1,63.2 125,30 31.9,63.2 46.1,186.3 "
+             id="polygon1-3"
+             style="fill:#dd0031"
+             transform="matrix(0.2935817,0.09778815,-0.09778815,0.2935817,44.350532,-8.7422463)" />
+          <polygon
+             class="st1"
+             points="218.1,63.2 125,30 125,52.2 125,52.1 125,153.4 125,230 203.9,186.3 "
+             id="polygon2"
+             style="fill:#c3002f"
+             transform="matrix(0.2935817,0.09778815,-0.09778815,0.2935817,44.350532,-8.7422463)" />
+          <path
+             class="st2"
+             d="M 75.953482,18.776879 46.105673,51.398021 v 0 l 6.370723,2.122002 v 0 l 6.29032,-7.428464 14.502936,4.830735 0.579492,9.716707 v 0 l 6.370723,2.122003 v 0 z M 72.798618,44.894633 62.81684,41.569836 71.807264,31.224743 Z"
+             id="path2-8"
+             style="fill:#ffffff;stroke-width:0.309439" />
+        </g>
+      </g>
+    </g>
+  </g>
+  <metadata
+     id="metadata3">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>jasmine-white-horizontal copy</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>
