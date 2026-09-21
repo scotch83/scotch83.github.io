@@ -1,7 +1,7 @@
 remote_theme: daattali/beautiful-jekyll
 plugins:
-- jekyll-remote-theme
-- jekyll-feed
+  - jekyll-remote-theme
+  - jekyll-feed
 title: The Artisan
 author: Mattia Collalti
 name: The artisan
@@ -14,7 +14,8 @@ navbar-links:
   Blog: "posts"
   Get in touch:
     - Github: ["https://github.com/scotch83", "fab fa-github"]
-    - LinkedIn: ["https://www.linkedin.com/in/mattiacollalti", "fab fa-linkedin"]
+    - LinkedIn:
+        ["https://www.linkedin.com/in/mattiacollalti", "fab fa-linkedin"]
     - Mail me: ["mailto:collalti.mattia@gmail.com", "far fa-paper-plane"]
     - Curriculum Vitae:
         [
@@ -26,10 +27,13 @@ navbar-links:
     - RxJS: ["https://rxjs.dev/"]
     - Ionic: ["https://ionic.io/"]
     - Xamarin: ["https://dotnet.microsoft.com/en-us/apps/xamarin"]
-    - Redux Files Generator: ["https://marketplace.visualstudio.com/items?itemName=scotch-development.redux-files-generator"]
+    - Redux Files Generator:
+        [
+          "https://marketplace.visualstudio.com/items?itemName=scotch-development.redux-files-generator",
+        ]
 social-network-links:
   email: "collalti.mattia@gmail.com"
-  rss: true  # remove this line if you don't want to show an RSS link at the bottom
+  rss: true # remove this line if you don't want to show an RSS link at the bottom
   github: scotch83
   linkedin: mattiacollalti
   hackerrank: collalti_mattia
