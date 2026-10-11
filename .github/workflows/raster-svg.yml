@@ -28,6 +28,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
+          # Full history: deciding which SVGs this push added needs the parent
+          # commit, and a new branch reports an all-zero "before" that git cannot
+          # resolve. The repository is a blog; the clone cost is negligible.
+          fetch-depth: 0
 
       - name: Install librsvg
         run: |
