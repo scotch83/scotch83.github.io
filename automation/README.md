@@ -30,7 +30,8 @@ Nothing publishes itself. Every run ends in a pull request that you review and m
    - `automation/topics.json` (topic moved from `queue` to `published`)
 7. The push triggers **`.github/workflows/raster-svg.yml`**, which rasterises the new SVG to
    `assets/images/<slug>.png` (1024px wide, alpha preserved) and commits it to the same branch.
-8. Poll for that PNG (about 15 seconds), then open the pull request with the draft inline.
+8. Poll for that PNG for up to about three minutes (nine attempts, twenty seconds apart),
+   then open the pull request with the draft inline.
 9. Send a Telegram message with the PR link.
 
 ## Why the PNG exists at all
@@ -69,7 +70,13 @@ rasteriser are harmless on their own.
 ## Failure handling
 
 All three workflows report through the shared n8n error workflow, which messages Telegram.
-The posting rule is strict: **on any failure, nothing is committed and nothing is published.**
+The posting rule is strict: **a failure never opens a pull request and never writes to
+`main`, so nothing publishes.** Be precise about the second half of that, though — by the
+time the run reaches the PNG poll it has already pushed `artisan/<date>` and three commits
+to the remote. A failure after that point therefore leaves an inert branch behind. `main` is
+untouched, so the queue and the published list stay correct, but `weekly-post` will stop at
+*Create Branch* if you re-run it for the same date until that branch is deleted.
+
 There is no retry command from Telegram (the bot's single trigger belongs to another
 workflow) — re-run `artisan-publisher · generate` from the n8n UI instead.
 
