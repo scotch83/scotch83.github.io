@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "notes": "Topic backlog for The Artisan. 'queue' is consumed oldest-first by artisan-publisher · weekly-post, which moves the topic to 'published' in the same pull request. 'vocabulary' is the closed list of tags the writer may use; anything outside it is rejected before commit.",
+  "vocabulary": [
+    "agenticcoding",
+    "aitools",
+    "angular",
+    "appium",
+    "architecture",
+    "auth0",
+    "authentication",
+    "authorization",
+    "capacitor",
+    "cicd",
+    "cleancode",
+    "cucumber",
+    "developer",
+    "devops",
+    "docker",
+    "dotnet",
+    "expressjs",
+    "frontend",
+    "fundamentals",
+    "git",
+    "google-sign-in",
+    "ionic",
+    "jasmine",
+    "java",
+    "javascript",
+    "jwt",
+    "mcp",
+    "microfrontends",
+    "nodejs",
+    "plugins",
+    "postgresql",
+    "progressivewebapp",
+    "pwa",
+    "python",
+    "quarkus",
+    "react",
+    "redux",
+    "solidprogramming",
+    "springboot",
+    "standalonecomponents",
+    "testing",
+    "third-party-identity-provider",
+    "unclebob",
+    "unittesting",
+    "ux",
+    "vscode",
+    "webdevelopment",
+    "xamarin"
+  ],
+  "core": [
+    "angular",
+    "architecture",
+    "frontend",
+    "testing",
+    "aitools",
+    "agenticcoding",
+    "java",
+    "postgresql",
+    "docker",
+    "cleancode"
+  ],
+  "queue": [
+    {
+      "id": "angular-signals-zoneless",
+      "title": "Angular Signals and Zoneless Change Detection: What Changes in Your Code",
+      "angle": "Zone.js is on its way out. The mental model shift matters more than the API, and most of the migration pain sits in the places nobody warns you about.",
+      "tags": ["angular", "architecture", "frontend"]
+    },
+    {
+      "id": "microfrontends-module-federation",
+      "title": "Micro-Frontends with Module Federation: Where the Seams Belong",
+      "angle": "Built a federated onboarding funnel in a regulated environment. The wins came from team boundaries; the costs came from pretending the seam was technical.",
+      "tags": ["angular", "microfrontends", "architecture"]
+    },
+    {
+      "id": "quarkus-vs-springboot",
+      "title": "Quarkus vs Spring Boot Behind an Angular SPA: Choosing a Java Backend",
+      "angle": "Both are in production today. A comparison driven by real constraints — startup, memory, developer velocity, and what the team already knows.",
+      "tags": ["java", "quarkus", "springboot"]
+    },
+    {
+      "id": "quarkus-openapi-contract-first",
+      "title": "Contract-First REST APIs with Quarkus and OpenAPI",
+      "angle": "Generate the client, not the mismatch. How a contract in the repository keeps a typed Angular client and a Java service honest.",
+      "tags": ["java", "quarkus", "architecture"]
+    },
+    {
+      "id": "postgresql-multi-tenant-reporting",
+      "title": "PostgreSQL Patterns for Multi-Tenant Financial Reporting",
+      "angle": "Settlements reporting taught me more about schema design than any course. Partitioning, isolation and query shape where the numbers must reconcile.",
+      "tags": ["postgresql", "architecture"]
+    },
+    {
+      "id": "capacitor-plugin-production",
+      "title": "Building a Production-Grade Capacitor Plugin",
+      "angle": "Native plugin work is not the hard part. The bridge contract, permissions, and the test double that keeps CI honest are.",
+      "tags": ["capacitor", "ionic", "testing"]
+    },
+    {
+      "id": "mobile-testing-pyramid",
+      "title": "The Mobile Testing Pyramid: Jasmine, Cucumber, Appium and BrowserStack",
+      "angle": "Led a mobile team through this exact stack. The lesson is fewer, stronger tests — and knowing which layer a failure belongs to.",
+      "tags": ["testing", "appium", "cucumber", "jasmine"]
+    },
+    {
+      "id": "mcp-servers-for-your-editor",
+      "title": "MCP Servers: Giving Your AI Assistant Real Tools",
+      "angle": "The practical, non-hype version — what to expose, what to keep out, and why a badly scoped tool makes the assistant worse.",
+      "tags": ["mcp", "aitools", "agenticcoding"]
+    },
+    {
+      "id": "copilot-skills-for-teams",
+      "title": "Writing Repository Skills So Your AI Writes Code Your Way",
+      "angle": "Skills, guardrails and context as versioned team assets rather than personal config. What actually changed how we review code.",
+      "tags": ["agenticcoding", "aitools", "architecture"]
+    },
+    {
+      "id": "redux-to-signals-migration",
+      "title": "Migrating from Redux to Signals-Based State in Angular",
+      "angle": "I have written Redux-in-Angular tooling and then migrated away from it. An honest account of what was better, what got worse, and what to do incrementally.",
+      "tags": ["angular", "redux", "architecture"]
+    },
+    {
+      "id": "ports-and-adapters-in-practice",
+      "title": "Ports and Adapters in Practice: Hiding the Framework at the Seams",
+      "angle": "Dependency inversion on a real service that had grown teeth — not a diagram. Before, problems, after, and what it cost.",
+      "tags": ["architecture", "cleancode", "solidprogramming"]
+    },
+    {
+      "id": "xamarin-to-maui",
+      "title": "From Xamarin.Forms to .NET MAUI: What Actually Changed",
+      "angle": "Shipped Xamarin in production across several clients before the rename. The migration frictions are real, and worth knowing in advance.",
+      "tags": ["xamarin", "dotnet"]
+    },
+    {
+      "id": "pwa-push-and-sync",
+      "title": "Web Push and Background Sync for Progressive Web Apps",
+      "angle": "Beyond the install prompt: the two capabilities that make a PWA feel native, and the pitfalls in each.",
+      "tags": ["pwa", "progressivewebapp", "javascript"]
+    },
+    {
+      "id": "design-tokens-component-library",
+      "title": "Design Tokens and a Component Library Your Designers Trust",
+      "angle": "When UX thinking drives the component API, the library stops being a fight. Tokens are the contract that makes it hold.",
+      "tags": ["ux", "frontend", "architecture"]
+    },
+    {
+      "id": "frontend-ci-cd-pipeline",
+      "title": "A Frontend Pipeline That Fails Fast: Caching, Matrices and Preview Deploys",
+      "angle": "Angular pipelines in GitLab CI and Azure DevOps, tuned for the only metric that matters: how quickly a developer learns they broke something.",
+      "tags": ["cicd", "devops", "frontend"]
+    },
+    {
+      "id": "identity-provider-traps",
+      "title": "OIDC, JWT and the Third-Party Identity Provider Traps",
+      "angle": "A follow-up to my Auth0 post, focused on the failure modes: token lifetime, claim mapping, logout, and the identity provider you do not control.",
+      "tags": ["authentication", "authorization", "jwt", "third-party-identity-provider"]
+    }
+  ],
+  "published": []
+}
