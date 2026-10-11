@@ -5,5 +5,5 @@
   <path d="M330 512 L694 512" stroke="#34bbde" stroke-width="26" stroke-linecap="round"/>
   <path d="M512 330 L512 694" stroke="#34bbde" stroke-width="26" stroke-linecap="round"/>
   <circle cx="512" cy="512" r="58" fill="#ebc600"/>
-  <path d="M300 760 L724 760 L512 880 Z" fill="#23a3c2" opacity="0.85"/>
+  <path d="M300 760 L724 760 L512 880 Z" fill="#23a3c2" opacity="0.9"/>
 </svg>
