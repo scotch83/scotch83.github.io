@@ -123,5 +123,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- assets/images
-          git commit -m "chore(artwork): rasterise cover SVG to PNG [skip ci]"
+          # No "[skip ci]" here, deliberately. This push cannot trigger the
+          # rasteriser again (it commits a .png, and the path filter wants .svg,
+          # and GITHUB_TOKEN pushes never trigger workflows anyway), so the token
+          # would buy nothing. It would actively harm: this commit rides in the
+          # post's PR, and a squash or rebase merge copies its subject into the
+          # commit message that lands on main, where the token suppresses
+          # jekyll.yml - the only thing that publishes the site. The post would
+          # merge and never appear. Keep this message free of skip directives.
+          git commit -m "chore(artwork): rasterise cover SVG to PNG"
           git push origin "HEAD:${BRANCH}"
