@@ -1,0 +1,135 @@
+name: Rasterise SVG artwork
+
+# Post covers are authored as transparent SVGs so they scale in the post list and
+# float on the page. The RSS feed publishes a raster twin to LinkedIn
+# (feed.xml -> <linkedin-img>), so every new cover SVG needs a matching PNG.
+#
+# Triggered by pushes to post branches (artisan/**), and manually from the Actions
+# tab to backfill. Commits the PNG back to the branch that pushed it.
+
+on:
+  push:
+    branches: ["artisan/**"]
+    paths: ["assets/images/**.svg"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: raster-svg-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  rasterise:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          # Full history: deciding which SVGs this push added needs the parent
+          # commit, and a new branch reports an all-zero "before" that git cannot
+          # resolve. The repository is a blog; the clone cost is negligible.
+          fetch-depth: 0
+
+      - name: Install librsvg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin
+
+      - name: Rasterise cover SVGs
+        id: raster
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          # Which SVGs to consider: everything (manual backfill) or just what this
+          # push added or modified.
+          targets="$(mktemp)"
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            find assets/images -type f -name '*.svg' | sort > "$targets"
+          else
+            # A brand new branch reports an all-zero "before" commit, so fall back
+            # to comparing the tip against its parent.
+            if git rev-parse --quiet --verify "$BEFORE^{commit}" >/dev/null 2>&1; then
+              range="$BEFORE..$AFTER"
+            else
+              range="HEAD~1..HEAD"
+            fi
+            git diff --name-only --diff-filter=AM "$range" -- assets/images \
+              | grep -E '\.svg$' > "$targets" || true
+          fi
+
+          if [ ! -s "$targets" ]; then
+            echo "No cover SVGs in this push."
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Guard: an LLM authored this artwork, and it lands in a public repo.
+          # Reject active content and remote references before publishing anything.
+          unsafe=0
+          while IFS= read -r svg; do
+            [ -n "$svg" ] || continue
+            if grep -Eqi '<script|<foreignObject|<!ENTITY|javascript:' "$svg"; then
+              echo "::error file=$svg::rejected: active content in SVG"
+              grep -Eni '<script|<foreignObject|<!ENTITY|javascript:' "$svg" || true
+              unsafe=1
+            fi
+            if grep -Eq '[[:space:]]on[a-z]+[[:space:]]*=' "$svg"; then
+              echo "::error file=$svg::rejected: inline event handler in SVG"
+              grep -Eni '[[:space:]]on[a-z]+[[:space:]]*=' "$svg" || true
+              unsafe=1
+            fi
+            if grep -Eqi '(xlink:)?href[[:space:]]*=[[:space:]]*["'"'"']?(https?:)?//' "$svg"; then
+              echo "::error file=$svg::rejected: remote reference in SVG"
+              grep -Eni '(xlink:)?href[[:space:]]*=' "$svg" || true
+              unsafe=1
+            fi
+          done < "$targets"
+          if [ "$unsafe" -ne 0 ]; then
+            echo "Refusing to rasterise unsafe artwork."
+            exit 1
+          fi
+
+          count=0
+          while IFS= read -r svg; do
+            [ -n "$svg" ] || continue
+            png="${svg%.svg}.png"
+            if [ -f "$png" ]; then
+              echo "skip (PNG already present): $svg"
+              continue
+            fi
+            echo "rasterising: $svg -> $png"
+            # Width 1024 matches the artwork viewBox 1:1; height follows the ratio,
+            # and alpha is preserved (no background is composited in).
+            rsvg-convert --width 1024 --keep-aspect-ratio --output "$png" "$svg"
+            count=$((count + 1))
+          done < "$targets"
+
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Rasterised $count cover(s)."
+
+      - name: Commit PNG twins
+        if: steps.raster.outputs.count != '0'
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- assets/images
+          # No "[skip ci]" here, deliberately. This push cannot trigger the
+          # rasteriser again (it commits a .png, and the path filter wants .svg,
+          # and GITHUB_TOKEN pushes never trigger workflows anyway), so the token
+          # would buy nothing. It would actively harm: this commit rides in the
+          # post's PR, and a squash or rebase merge copies its subject into the
+          # commit message that lands on main, where the token suppresses
+          # jekyll.yml - the only thing that publishes the site. The post would
+          # merge and never appear. Keep this message free of skip directives.
+          git commit -m "chore(artwork): rasterise cover SVG to PNG"
+          git push origin "HEAD:${BRANCH}"
