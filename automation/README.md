@@ -24,13 +24,15 @@ Nothing publishes itself. Every run ends in a pull request that you review and m
    `## Conclusion` + "Happy coding!" at the end, 3–4 tags from the closed vocabulary.
 4. Draw the cover, in two calls. A second DeepSeek pass writes the brief and must name the
    technology and draw its real mark. **OpenAI `gpt-image-2.5-sunburst`** renders that brief
-   at 1536×1024, quality high, `background: opaque` (measured: $0.0435 — 1,372 image output
-   tokens plus 469 prompt tokens), and Recraft's `/v1/images/vectorize` traces it to SVG for
-   $0.01. The PNG is kept as the LinkedIn twin; the traced SVG is what the site renders.
-   `Validate Cover` also drops a dark rectangle behind the artwork as a safety net.
-   This call is an HTTP Request rather than n8n's OpenAI node on purpose: that node's option
-   collection only forwards schema-defined fields, so `background` is dropped and its images
-   come back transparent, with the logo cut out of the shield as a hole.
+   at 1536×1024, quality high, `background: transparent` (measured: $0.0435 — 1,372 image
+   output tokens plus 469 prompt tokens), and Recraft's `/v1/images/vectorize` traces it to
+   SVG for $0.01. The PNG is kept as the LinkedIn twin; the traced SVG is what the site
+   renders. The cover is transparent on purpose: it sits on the white page exactly like the
+   nine existing covers, with the mark large and centred and the white title over its
+   saturated body.
+   This call is an HTTP Request rather than n8n's OpenAI node on purpose: the node's option
+   collection only forwards schema-defined fields (so `background` is dropped), and it does
+   not expose `usage`, which is how the cost above is measured.
 5. Validate everything — front matter keys, tag vocabulary, word count, no unsafe SVG
    content, no `{{` outside `{% raw %}`, and a **contrast gate** that rejects a full-bleed
    pale cover, because the post title is white. A rejected cover is retried once with a
@@ -54,7 +56,7 @@ automation. So each cover ships in two formats:
 - **`.svg`** — the traced cover. It is a full-bleed dark field by design: the post title is
   white and sits across the middle, so a pale or transparent cover would make it unreadable.
   It scales cleanly in the post list (a 192×192 box, 100×100 on mobile).
-- **`.png`** — the 1536×1024 raster the image model drew, before tracing. This is the file LinkedIn
+- **`.png`** — the 1536×1024 raster the image model drew, before tracing, alpha preserved like the existing covers. This is the file LinkedIn
   pulls through `feed.xml`.
 
 WebP is never used: the LinkedIn automation re-fetches the image, and PNG is the only format
