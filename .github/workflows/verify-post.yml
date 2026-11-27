@@ -1,0 +1,41 @@
+name: Verify post code samples
+
+# The publisher writes posts with fenced TypeScript. A sample that does not compile is worse
+# than no sample: a reader pastes it and it fails. This gate is mechanical - it does not judge
+# the prose, only that every code block is real TypeScript whose identifiers the post actually
+# declares or imports. It runs on any pull request that touches a post, so a red check here
+# means "do not merge yet".
+#
+# Judging whether the prose is true is a different job, done in the pipeline itself by the
+# fact-check pass in `artisan-publisher · generate`.
+
+on:
+  pull_request:
+    paths:
+      - "_posts/**.md"
+      - "automation/verify-code.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the changed-post diff needs the merge base
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install the type checker
+        working-directory: automation
+        run: npm install --no-audit --no-fund
+
+      - name: Type-check the samples in every changed post
+        run: node automation/verify-code.mjs --changed --base "origin/${{ github.base_ref }}"

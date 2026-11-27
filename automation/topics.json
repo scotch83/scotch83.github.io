@@ -74,6 +74,7 @@
       "id": "angular-signals-zoneless",
       "title": "Angular Signals and Zoneless Change Detection: What Changes in Your Code",
       "angle": "Zone.js is on its way out. The mental model shift matters more than the API, and most of the migration pain sits in the places nobody warns you about.",
+      "sources": ["https://angular.dev/guide/signals", "https://angular.dev/guide/zoneless"],
       "tags": ["angular", "architecture", "frontend"]
     },
     {
@@ -92,18 +93,21 @@
       "id": "quarkus-openapi-contract-first",
       "title": "Contract-First REST APIs with Quarkus and OpenAPI",
       "angle": "Generate the client, not the mismatch. How a contract in the repository keeps a typed Angular client and a Java service honest.",
+      "sources": ["https://quarkus.io/guides/openapi-swaggerui"],
       "tags": ["java", "quarkus", "architecture"]
     },
     {
       "id": "postgresql-multi-tenant-reporting",
       "title": "PostgreSQL Patterns for Multi-Tenant Reporting",
       "angle": "Reporting schemas taught me more about data modelling than any course. Partitioning, isolation and query shape where the numbers must reconcile.",
+      "sources": ["https://www.postgresql.org/docs/current/ddl-partitioning.html", "https://www.postgresql.org/docs/current/ddl-rowsecurity.html"],
       "tags": ["postgresql", "architecture", "database"]
     },
     {
       "id": "capacitor-plugin-production",
       "title": "Building a Production-Grade Capacitor Plugin",
       "angle": "Native plugin work is not the hard part. The bridge contract, permissions, and the test double that keeps CI honest are.",
+      "sources": ["https://capacitorjs.com/docs/plugins/creating-plugins"],
       "tags": ["capacitor", "ionic", "testing"]
     },
     {
