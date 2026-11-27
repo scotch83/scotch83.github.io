@@ -29,7 +29,8 @@ Nothing publishes itself. Every run ends in a pull request that you review and m
    SVG for $0.01. The PNG is kept as the LinkedIn twin; the traced SVG is what the site
    renders. The cover is transparent on purpose: it sits on the white page exactly like the
    nine existing covers, with the mark large and centred and the white title over its
-   saturated body.
+   saturated body. The brief also requires the mark's real **faceting** — Angular's shield is
+   two flat tones of the same hue, the right side about 18% darker, not one flat fill.
    This call is an HTTP Request rather than n8n's OpenAI node on purpose: the node's option
    collection only forwards schema-defined fields (so `background` is dropped), and it does
    not expose `usage`, which is how the cost above is measured.
