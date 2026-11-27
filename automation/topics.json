@@ -2,6 +2,7 @@
   "version": 1,
   "notes": "Topic backlog for The Artisan. 'queue' is consumed oldest-first by artisan-publisher · weekly-post, which moves the topic to 'published' in the same pull request. 'vocabulary' is the closed list of tags the writer may use; anything outside it is rejected before commit.",
   "vocabulary": [
+    "accessibility",
     "agenticcoding",
     "aitools",
     "angular",
@@ -14,6 +15,7 @@
     "cicd",
     "cleancode",
     "cucumber",
+    "database",
     "developer",
     "devops",
     "docker",
@@ -30,6 +32,8 @@
     "jwt",
     "mcp",
     "microfrontends",
+    "mobile",
+    "ngrx",
     "nodejs",
     "plugins",
     "postgresql",
@@ -39,11 +43,13 @@
     "quarkus",
     "react",
     "redux",
+    "rxjs",
     "solidprogramming",
     "springboot",
     "standalonecomponents",
     "testing",
     "third-party-identity-provider",
+    "typescript",
     "unclebob",
     "unittesting",
     "ux",
@@ -92,7 +98,7 @@
       "id": "postgresql-multi-tenant-reporting",
       "title": "PostgreSQL Patterns for Multi-Tenant Financial Reporting",
       "angle": "Settlements reporting taught me more about schema design than any course. Partitioning, isolation and query shape where the numbers must reconcile.",
-      "tags": ["postgresql", "architecture"]
+      "tags": ["postgresql", "architecture", "database"]
     },
     {
       "id": "capacitor-plugin-production",
@@ -134,7 +140,7 @@
       "id": "xamarin-to-maui",
       "title": "From Xamarin.Forms to .NET MAUI: What Actually Changed",
       "angle": "Shipped Xamarin in production across several clients before the rename. The migration frictions are real, and worth knowing in advance.",
-      "tags": ["xamarin", "dotnet"]
+      "tags": ["xamarin", "dotnet", "mobile"]
     },
     {
       "id": "pwa-push-and-sync",

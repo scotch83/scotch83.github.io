@@ -1,8 +1,10 @@
 # automation/ — the Artisan publisher
 
-Everything in this folder belongs to the automated post pipeline. Nothing here is part of
-the Jekyll build; Jekyll ignores files that do not start with `_` or sit in a known folder,
-and `automation/` is not published to the site.
+Everything in this folder belongs to the automated post pipeline, and **all of it is
+published to the site as static files** — Jekyll copies every path that does not start with
+`_`, and `_config.yml` sets no `exclude:`. `README.md`, `topics.json` and `skills.md` are all
+served from `https://scotch83.github.io/automation/…`. Treat every file in this folder as
+public.
 
 ## What runs
 
@@ -28,8 +30,11 @@ Nothing publishes itself. Every run ends in a pull request that you review and m
    - `_posts/<YYYY-MM-DD>-<slug>.md`
    - `assets/images/<slug>.svg`
    - `automation/topics.json` (topic moved from `queue` to `published`)
-7. The push triggers **`.github/workflows/raster-svg.yml`**, which rasterises the new SVG to
+7. The push triggers **`.github/workflows/raster-svg.yml`**, which rasterises the cover SVG to
    `assets/images/<slug>.png` (1024px wide, alpha preserved) and commits it to the same branch.
+   It rasterises **every cover SVG that push added or changed**, and skips one only when that
+   same push already supplied its `.png`. Editing an existing cover therefore refreshes its
+   PNG; committing an unchanged one changes nothing.
 8. Poll for that PNG: nine checks, twenty seconds apart (about three minutes), re-fetching
    until the file exists. If it is still missing on the ninth check the run **aborts** with an
    explicit error rather than opening a pull request with a broken cover. On success, open the
@@ -66,8 +71,14 @@ do not hand-edit it except to remove a mistake.
 the workflow rejects a post carrying a tag outside the list. `core` marks the tags the writer
 prefers when the choice is free.
 
-**Pause it.** Deactivate `artisan-publisher · weekly-post` in n8n. The topic planner and the
-rasteriser are harmless on their own.
+**Pause it.** Deactivate `artisan-publisher · weekly-post` in n8n. The topic planner is inert
+until its two-month schedule fires, but the rasteriser is **not** harmless on its own: it runs
+on any push that touches a cover SVG, so pausing the publisher only stops new artwork from
+arriving — it does not make the workflow dormant.
+
+**Backfill a missing PNG.** Run the *Rasterise SVG artwork* workflow manually against the
+branch. A manual run only uploads the PNGs as a workflow artifact — it never commits, so it
+cannot write to `main` or to any branch. Download the artifact and commit it yourself.
 
 ## Failure handling
 
@@ -97,9 +108,20 @@ rasteriser, and the run would abort waiting for a PNG that never appears.
 ## Security notes
 
 - The artwork is machine-authored and lands in a public repository, so the rasteriser
-  **refuses to publish** any SVG containing `<script>`, `<foreignObject>`, an `on*` event
-  handler, an `<!ENTITY>` declaration, a `javascript:` URL, or a remote `href`. The same
-  check runs in n8n before the commit, so a bad SVG never reaches a branch.
+  **blocks the rasterisation** of any SVG it considers unsafe: `<script>`, `<foreignObject>`,
+  `<iframe>`, `<object>`, `<embed>`, `<set>`, `<animate>` and the other animation elements —
+  including namespace-prefixed spellings such as `x:script` — any `on*` event handler, an
+  `<!ENTITY>` declaration, a `SYSTEM` doctype, a `javascript:` URL, an `@import`, a `url(...)`
+  pointing off-origin or at a `data:` payload, and a remote or `data:` `href`/`src`. Attribute
+  values are HTML-decoded and whitespace-stripped before matching, so entity-encoded and
+  line-broken variants (`jav&#x61;script:`, a `javascript:` scheme split across a newline) do
+  not slip through.
+- Blocking stops the PNG, **not the SVG.** n8n pushes the artwork to `artisan/<date>` before
+  this workflow runs, so a rejected SVG is already on the branch: the run fails, no PNG is
+  produced, the PNG poll in n8n gives up and alerts, and you have to **delete the offending
+  SVG from the branch** before re-running. The same check runs in n8n before the commit, so a
+  bad SVG should never reach a branch in the first place — this is the second line, not the
+  only one.
 - The n8n GitHub credential is a fine-grained token scoped to this repository only, with
   **Contents: read and write** and **Pull requests: read and write**. No other permissions.
 - `topics.json` is public. Treat it as a public editorial calendar: never put anything in it
