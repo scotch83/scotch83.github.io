@@ -36,7 +36,10 @@ Nothing publishes itself. Every run ends in a pull request that you review and m
 5. Validate everything — front matter keys, tag vocabulary, word count, no unsafe SVG
    content, no `{{` outside `{% raw %}`, and a **contrast gate** that rejects a full-bleed
    pale cover, because the post title is white. A rejected cover is retried once with a
-   hardened brief; any other failure aborts the run and alerts.
+   hardened brief; any other failure aborts the run and alerts. The traced artwork is also
+   wrapped in the same **soft drop shadow** the existing covers carry (a
+   `feGaussianBlur`/`feOffset` filter, about 500 bytes) — the image model draws flat, and
+   vectorising a blurred shadow would produce dozens of banded paths.
 6. Create branch `artisan/<YYYY-MM-DD>-<HHMMSS>` from `main` and commit — the time suffix
    makes every attempt its own branch, so retrying a run that failed halfway cannot
    collide with the branch and file blobs the failed attempt left behind:
