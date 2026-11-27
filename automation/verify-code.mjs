@@ -252,8 +252,8 @@ function postsFromArgs(args) {
 function main() {
   const posts = postsFromArgs(process.argv.slice(2));
   if (!posts.length) {
-    console.error('verify-code: no posts to check.');
-    return 1;
+    console.log('ok    no posts changed - nothing to type-check');
+    return 0;
   }
   let failed = 0;
   for (const post of posts) {
