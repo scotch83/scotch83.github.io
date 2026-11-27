@@ -23,8 +23,10 @@ Nothing publishes itself. Every run ends in a pull request that you review and m
 3. Write the post: ~500–1000 words in the house style, `<!--more-->` after the intro,
    `## Conclusion` + "Happy coding!" at the end, 3–4 tags from the closed vocabulary.
 4. Draw the cover, in two calls. A second DeepSeek pass writes the brief and must name the
-   technology and draw its real mark. **Recraft V4.1** renders that brief as a 1216×896 PNG
-   (`recraftv4_1_raster`), and Recraft's `/v1/images/vectorize` traces it to SVG for $0.01.
+   technology and draw its real mark. **Recraft V4.1 Pro** renders that brief as a 2432×1792 PNG
+   (`recraftv4_1_pro_raster`, $0.21), and Recraft's `/v1/images/vectorize` traces it to SVG
+   for $0.01. Pro is used because the default V4.1 model renders the same brief visibly
+   looser.
    The PNG is kept as the LinkedIn twin; the traced SVG is what the site renders.
 5. Validate everything — front matter keys, tag vocabulary, word count, no unsafe SVG
    content, no `{{` outside `{% raw %}`, and a **contrast gate** that rejects a full-bleed
@@ -49,7 +51,7 @@ automation. So each cover ships in two formats:
 - **`.svg`** — the traced cover. It is a full-bleed dark field by design: the post title is
   white and sits across the middle, so a pale or transparent cover would make it unreadable.
   It scales cleanly in the post list (a 192×192 box, 100×100 on mobile).
-- **`.png`** — the 1216×896 raster Recraft drew, before tracing. This is the file LinkedIn
+- **`.png`** — the 2432×1792 raster Recraft drew, before tracing. This is the file LinkedIn
   pulls through `feed.xml`.
 
 WebP is never used: the LinkedIn automation re-fetches the image, and PNG is the only format
@@ -60,7 +62,7 @@ already proven end to end.
 **Regenerate a post you did not like.** Run `artisan-publisher · generate` from the n8n UI
 with a topic. It does not touch the branch or the PR — you get the markdown and the SVG to
 inspect, and you can re-run without consuming the queue. Each run does spend one Recraft
-generation and one vectorize (about $0.045) and two DeepSeek calls.
+generation and one vectorize (about $0.22) and two DeepSeek calls.
 
 **Change what it writes about.** Edit `automation/skills.md`. It is embedded into the writing
 and planning prompts verbatim, and it is the only place the model learns your voice, your
