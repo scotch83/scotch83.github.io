@@ -24,11 +24,13 @@ Nothing publishes itself. Every run ends in a pull request that you review and m
    `## Conclusion` + "Happy coding!" at the end, 3–4 tags from the closed vocabulary.
 4. Draw the cover, in two calls. A second DeepSeek pass writes the brief and must name the
    technology and draw its real mark. **OpenAI `gpt-image-2.5-sunburst`** renders that brief
-   through n8n's OpenAI node (`image` → `generate`, 1536×1024, quality high, opaque
-   background, ≈$0.19), and Recraft's `/v1/images/vectorize` traces it to SVG for $0.01. The
-   PNG is kept as the LinkedIn twin; the traced SVG is what the site renders. `Validate Cover`
-   also drops a dark rectangle behind the artwork, so a transparent render can never leave a
-   pale logo cut-out sitting on the white page.
+   at 1536×1024, quality high, `background: opaque` (measured: $0.0435 — 1,372 image output
+   tokens plus 469 prompt tokens), and Recraft's `/v1/images/vectorize` traces it to SVG for
+   $0.01. The PNG is kept as the LinkedIn twin; the traced SVG is what the site renders.
+   `Validate Cover` also drops a dark rectangle behind the artwork as a safety net.
+   This call is an HTTP Request rather than n8n's OpenAI node on purpose: that node's option
+   collection only forwards schema-defined fields, so `background` is dropped and its images
+   come back transparent, with the logo cut out of the shield as a hole.
 5. Validate everything — front matter keys, tag vocabulary, word count, no unsafe SVG
    content, no `{{` outside `{% raw %}`, and a **contrast gate** that rejects a full-bleed
    pale cover, because the post title is white. A rejected cover is retried once with a
@@ -63,7 +65,7 @@ already proven end to end.
 **Regenerate a post you did not like.** Run `artisan-publisher · generate` from the n8n UI
 with a topic. It does not touch the branch or the PR — you get the markdown and the SVG to
 inspect, and you can re-run without consuming the queue. Each run does spend one Recraft
-generation and one vectorize (about $0.20) and two DeepSeek calls.
+generation and one vectorize (about $0.054) and two DeepSeek calls.
 
 **Change what it writes about.** Edit `automation/skills.md`. It is embedded into the writing
 and planning prompts verbatim, and it is the only place the model learns your voice, your
