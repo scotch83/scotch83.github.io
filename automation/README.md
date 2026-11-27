@@ -77,6 +77,13 @@ generation and one vectorize (about $0.054) and two DeepSeek calls.
 and planning prompts verbatim, and it is the only place the model learns your voice, your
 stack and the topics that are off limits.
 
+**Watch the nouns you put in `skills.md`.** The writer treats that file as the only source of
+truth about you, so any concrete domain it names is fair game for a code sample: a brief that
+mentions finance processing produced a post whose component, model and module path were all
+named after that business process. Describe the background generically, and keep the
+non-negotiable rule that examples use an ordinary domain — orders, invoices, customers, items,
+events. A reader should never be able to infer an employer's industry from the code.
+
 **Add or reorder topics.** Edit `queue` in `automation/topics.json`. Order is the publish
 order. `published` records what has already been used and is appended to automatically —
 do not hand-edit it except to remove a mistake.
