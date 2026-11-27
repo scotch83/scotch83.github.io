@@ -96,8 +96,8 @@
     },
     {
       "id": "postgresql-multi-tenant-reporting",
-      "title": "PostgreSQL Patterns for Multi-Tenant Financial Reporting",
-      "angle": "Settlements reporting taught me more about schema design than any course. Partitioning, isolation and query shape where the numbers must reconcile.",
+      "title": "PostgreSQL Patterns for Multi-Tenant Reporting",
+      "angle": "Reporting schemas taught me more about data modelling than any course. Partitioning, isolation and query shape where the numbers must reconcile.",
       "tags": ["postgresql", "architecture", "database"]
     },
     {
