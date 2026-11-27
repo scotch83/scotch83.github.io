@@ -5,7 +5,9 @@ name: Rasterise SVG artwork
 # (feed.xml -> <linkedin-img>), so every new cover SVG needs a matching PNG.
 #
 # Triggered by pushes to post branches (artisan/**), and manually from the Actions
-# tab to backfill. Commits the PNG back to the branch that pushed it.
+# tab to backfill. A push commits the PNG back to the branch that pushed it. A
+# manual backfill only attaches the PNGs as a downloadable artifact: it must never
+# write to whatever branch it was dispatched from, which could be main.
 
 on:
   push:
@@ -44,24 +46,43 @@ jobs:
           EVENT: ${{ github.event_name }}
           BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
 
           # Which SVGs to consider: everything (manual backfill) or just what this
           # push added or modified.
           targets="$(mktemp)"
+          provided="$(mktemp)"
+          changed_paths="$(mktemp)"
           if [ "$EVENT" = "workflow_dispatch" ]; then
             find assets/images -type f -name '*.svg' | sort > "$targets"
           else
-            # A brand new branch reports an all-zero "before" commit, so fall back
-            # to comparing the tip against its parent.
             if git rev-parse --quiet --verify "$BEFORE^{commit}" >/dev/null 2>&1; then
               range="$BEFORE..$AFTER"
             else
-              range="HEAD~1..HEAD"
+              # A brand new branch reports an all-zero "before" the git cannot
+              # resolve. "HEAD~1..HEAD" is wrong here: it only sees the last commit
+              # of the push, so a branch-creation push carrying the post, the SVG
+              # and the topics finds no SVG, reports success and commits nothing.
+              # Diff from the merge base instead, which covers every commit the
+              # branch adds. The fallbacks only matter if origin/$DEFAULT_BRANCH is
+              # missing or the push really is a single root commit.
+              base="$(git merge-base "$AFTER" "origin/$DEFAULT_BRANCH" 2>/dev/null || true)"
+              if [ -n "$base" ]; then
+                range="$base..$AFTER"
+              elif git rev-parse --quiet --verify 'HEAD~1' >/dev/null 2>&1; then
+                range="HEAD~1..HEAD"
+              else
+                range="4b825dc642cb6eb9a060e54bf8d69288fbee4904..$AFTER"
+              fi
             fi
-            git diff --name-only --diff-filter=AM "$range" -- assets/images \
-              | grep -E '\.svg$' > "$targets" || true
+            # --no-renames: rename detection would report a moved cover as R and
+            # hide the new name from --diff-filter=AM, so it would never rasterise.
+            git diff --name-only --no-renames --diff-filter=AM "$range" -- assets/images \
+              > "$changed_paths"
+            grep -E '\.svg$' "$changed_paths" > "$targets" || true
+            grep -E '\.png$' "$changed_paths" > "$provided" || true
           fi
 
           if [ ! -s "$targets" ]; then
@@ -70,38 +91,105 @@ jobs:
             exit 0
           fi
 
-          # Guard: an LLM authored this artwork, and it lands in a public repo.
-          # Reject active content and remote references before publishing anything.
-          unsafe=0
-          while IFS= read -r svg; do
-            [ -n "$svg" ] || continue
-            if grep -Eqi '<script|<foreignObject|<!ENTITY|javascript:' "$svg"; then
-              echo "::error file=$svg::rejected: active content in SVG"
-              grep -Eni '<script|<foreignObject|<!ENTITY|javascript:' "$svg" || true
-              unsafe=1
-            fi
-            if grep -Eq '[[:space:]]on[a-z]+[[:space:]]*=' "$svg"; then
-              echo "::error file=$svg::rejected: inline event handler in SVG"
-              grep -Eni '[[:space:]]on[a-z]+[[:space:]]*=' "$svg" || true
-              unsafe=1
-            fi
-            if grep -Eqi '(xlink:)?href[[:space:]]*=[[:space:]]*["'"'"']?(https?:)?//' "$svg"; then
-              echo "::error file=$svg::rejected: remote reference in SVG"
-              grep -Eni '(xlink:)?href[[:space:]]*=' "$svg" || true
-              unsafe=1
-            fi
-          done < "$targets"
-          if [ "$unsafe" -ne 0 ]; then
-            echo "Refusing to rasterise unsafe artwork."
-            exit 1
-          fi
+          # Guard: an LLM authored this artwork, and it lands in a public repo served
+          # as image/svg+xml, where an SVG is a scriptable same-origin document. Reject
+          # active content and off-origin references before publishing anything. This
+          # blocks the rasterisation; it cannot remove the SVG, which the pipeline has
+          # already pushed to the branch - delete it there and re-run for that topic.
+          guard="$(mktemp)"
+          cat > "$guard" <<'PY'
+          import html, pathlib, re, sys
+
+          # The cover SVG is machine-authored and published to a public repository served as
+          # image/svg+xml, where an SVG is a scriptable same-origin document. Refuse active
+          # content and anything fetched from off-origin.
+          #
+          # Probes run against the entity-decoded text: "jav&#x61;script:" is a live
+          # javascript: URL to a parser, but looks inert to a literal grep.
+          BANNED_TAGS = {
+              "script", "foreignobject", "iframe", "object", "embed",
+              # Animation can rewrite an href after load, with no click and no handler.
+              "set", "animate", "animatetransform", "animatemotion",
+          }
+
+          TAG_RE = re.compile(
+              r"<\s*/?\s*([A-Za-z][A-Za-z0-9_.-]*(?::[A-Za-z][A-Za-z0-9_.-]*)?)"
+          )
+
+          PATTERNS = [
+              (r"<!\s*ENTITY\b", "entity declaration"),
+              (r"<!\s*DOCTYPE[^>]*\bSYSTEM\b", "external DTD"),
+              (r"javascript\s*:", "javascript: URL"),
+              (r"<[^>]*\son[a-z]+\s*=", "inline event handler"),
+              (r"@\s*import\b", "CSS @import"),
+              (r"url\s*\(\s*['\"]?\s*(?:https?:)?//", "remote CSS url()"),
+              (r"url\s*\(\s*['\"]?\s*data\s*:", "data: CSS url()"),
+              (r"(?:xlink\s*:)?(?:href|src)\s*=\s*['\"]?\s*(?:https?:)?//", "remote reference"),
+              (r"(?:xlink\s*:)?(?:href|src)\s*=\s*['\"]?\s*data\s*:", "data: reference"),
+          ]
+
+
+          def findings(path):
+              raw = pathlib.Path(path).read_text(errors="replace")
+              # Comments are inert; drop them first so a comment cannot raise a false alarm.
+              decoded = re.sub(r"<!--.*?-->", "", raw, flags=re.DOTALL)
+              # Decode entities last, so "jav&#x61;script:" becomes the live URL a parser sees.
+              decoded = html.unescape(decoded)
+              # A URL parser strips tab, LF and CR from a scheme, so "java\nscript:" is live.
+              collapsed = re.sub(r"[\t\n\r]", "", decoded)
+
+              out = []
+              for m in TAG_RE.finditer(decoded):
+                  if m.group(1).split(":")[-1].lower() in BANNED_TAGS:
+                      label = f"{m.group(1)} element"
+                      out.append((label, decoded[: m.start()].count("\n") + 1, m.group(0)[:90]))
+              for pattern, label in PATTERNS:
+                  m = re.search(pattern, decoded, re.IGNORECASE | re.DOTALL)
+                  if m:
+                      out.append((label, decoded[: m.start()].count("\n") + 1, m.group(0)[:90]))
+                  else:
+                      m = re.search(pattern, collapsed, re.IGNORECASE | re.DOTALL)
+                      if m:
+                          out.append((label, None, m.group(0)[:90]))
+              return out
+
+
+          def main(paths):
+              unsafe = set()
+              for path in paths:
+                  for label, line, snippet in findings(path):
+                      where = f"{path}:{line}" if line else path
+                      print(f"::error file={path}::unsafe artwork: {label}")
+                      print(f"{where}: {label}: {snippet.replace(chr(10), '\\n')}")
+                      unsafe.add(path)
+              if unsafe:
+                  print(f"\nRefusing to rasterise {len(unsafe)} unsafe file(s).")
+                  print("The SVG is already on the branch - delete it, then re-run for that topic.")
+                  return 1
+              print(f"No active content or off-origin reference in {len(paths)} file(s).")
+              return 0
+
+
+          if __name__ == "__main__":
+              # Paths arrive on stdin. Sniffing an argument for a ".txt" suffix looked
+              # clever but mktemp() names its file "tmp.XXXXXXXXXX", so every run would have
+              # scanned the list file itself, found nothing and reported the artwork clean.
+              paths = [line.strip() for line in sys.stdin.read().splitlines() if line.strip()]
+              sys.exit(main(paths))
+          PY
+          python3 "$guard" < "$targets"
 
           count=0
           while IFS= read -r svg; do
             [ -n "$svg" ] || continue
             png="${svg%.svg}.png"
-            if [ -f "$png" ]; then
-              echo "skip (PNG already present): $svg"
+            # Rasterise every SVG this push touched, unless the same push supplied its
+            # PNG. Comparing mtimes instead would not work: checkout writes every file at
+            # checkout time, so "PNG newer than SVG" is decided by write order, not by
+            # which one is actually current - and a cover edited in a later commit would
+            # keep publishing its old artwork from a run that reports success.
+            if [ -s "$provided" ] && grep -qxF "$png" "$provided"; then
+              echo "skip (PNG supplied by this push): $svg"
               continue
             fi
             echo "rasterising: $svg -> $png"
@@ -111,11 +199,41 @@ jobs:
             count=$((count + 1))
           done < "$targets"
 
+          # Decide what to publish from the worktree rather than from count. rsvg output
+          # is deterministic, so a re-rasterised but byte-identical PNG is not a change
+          # and must not produce an empty commit.
+          changed_files="$RUNNER_TEMP/twins.txt"
+          git status --porcelain -- assets/images | awk '{print $2}' > "$changed_files"
+          changed=0
+          if [ -s "$changed_files" ]; then
+            changed=1
+          fi
+
           echo "count=$count" >> "$GITHUB_OUTPUT"
-          echo "Rasterised $count cover(s)."
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          {
+            echo "changed_files<<EOF_TWINS"
+            cat "$changed_files"
+            echo "EOF_TWINS"
+          } >> "$GITHUB_OUTPUT"
+          echo "Rasterised $count cover(s); $changed change(s) staged."
+
+      - name: Upload PNG twins (manual backfill)
+        # A dispatch can be started from any branch, including main. It must never
+        # commit, so it hands the PNGs back as a downloadable artifact instead.
+        if: github.event_name == 'workflow_dispatch' && steps.raster.outputs.changed == '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rasterised-png-twins
+          path: ${{ steps.raster.outputs.changed_files }}
+          if-no-files-found: error
 
       - name: Commit PNG twins
-        if: steps.raster.outputs.count != '0'
+        # Pushes only: committing is what keeps main out of reach for a dispatch.
+        # Gated on whether the worktree actually changed, not on how many SVGs were
+        # evaluated, so a run that produced nothing identical fails loudly instead
+        # of committing an empty change.
+        if: github.event_name == 'push' && steps.raster.outputs.changed == '1'
         env:
           BRANCH: ${{ github.ref_name }}
         run: |
@@ -132,4 +250,11 @@ jobs:
           # jekyll.yml - the only thing that publishes the site. The post would
           # merge and never appear. Keep this message free of skip directives.
           git commit -m "chore(artwork): rasterise cover SVG to PNG"
-          git push origin "HEAD:${BRANCH}"
+          # The concurrency group only serialises this workflow with itself, so a
+          # concurrent human push to the same branch would still be rejected as a
+          # non-fast-forward. Rebase once and retry; the PNG is not lost either
+          # way, since it is already written to the worktree.
+          git push origin "HEAD:${BRANCH}" || {
+            git pull --rebase origin "$BRANCH"
+            git push origin "HEAD:${BRANCH}"
+          }
