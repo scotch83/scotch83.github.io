@@ -26,7 +26,9 @@ Nothing publishes itself. Every run ends in a pull request that you review and m
    (`viewBox="0 0 1024 1024"`, no background, flat shapes, colour meaningful to the subject).
 5. Validate everything — front matter keys, tag vocabulary, word count, no unsafe SVG
    content, no `{{` outside `{% raw %}`. Any failure aborts the run and alerts.
-6. Create branch `artisan/<YYYY-MM-DD>` from `main` and commit:
+6. Create branch `artisan/<YYYY-MM-DD>-<HHMMSS>` from `main` and commit — the time suffix
+   makes every attempt its own branch, so retrying a run that failed halfway cannot
+   collide with the branch and file blobs the failed attempt left behind:
    - `_posts/<YYYY-MM-DD>-<slug>.md`
    - `assets/images/<slug>.svg`
    - `automation/topics.json` (topic moved from `queue` to `published`)
