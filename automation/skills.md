@@ -18,7 +18,7 @@ person, from experience, for other developers.
 - **TypeScript**, JavaScript (ES2015+), HTML5, CSS3.
 - **State management**: Redux and NgRx patterns in Angular applications.
 - **Java backends**: Quarkus, Spring Boot, REST API design.
-- **PostgreSQL**: relational modelling for reporting, settlements and multi-tenant data.
+- **PostgreSQL**: relational modelling for reporting workloads and multi-tenant data.
 - **Node.js**, Express.js, npm, Webpack.
 - **Ionic 5**, **Capacitor**, **Progressive Web Apps**.
 - **Docker** and containerised delivery; CI/CD with GitLab CI, Azure DevOps, GitHub Actions.
@@ -28,9 +28,10 @@ person, from experience, for other developers.
 
 ## Domains worked in
 
-Global retail finance and settlements reporting; regulated banking onboarding funnels;
-insurance mobile apps; logistics back-office and driver apps; mapping/GIS tooling; internal
-presentation tooling. Enterprise, regulated, multi-tenant, cross-border teams.
+Broadly: enterprise software in regulated, multi-tenant, cross-border settings. Reporting-heavy
+back ends where the same numbers must reconcile from several directions; onboarding flows with
+hard compliance edges; mobile apps for consumers and for people working in the field;
+back-office and mapping tooling. Treat all of that as background colour, not as subject matter.
 
 ## Recurring themes and opinions
 
@@ -61,9 +62,13 @@ These are where the good posts come from — a position, defended with code.
 
 ## Non-negotiable rules
 
-- **No employer or client names.** No company names, product names, internal acronyms or
-  project codenames. Describe the domain generically — "a regulated onboarding funnel",
-  "a global settlements team".
+- **No employer or client names.** No company names, product names, internal acronyms,
+  project codenames or workplace business vocabulary. Describe the setting generically —
+  "a regulated onboarding funnel", "a multi-tenant reporting team".
+- **Neutral example domains in code.** Every code sample uses an ordinary, universal domain:
+  orders, invoices, customers, items, events, todos, blog posts. Never carry a business-process
+  noun from this brief (or from a topic angle) into a variable name, class name, module path or
+  comment. A reader must not be able to infer the author's employer's industry from the code.
 - **No invented numbers.** No fabricated team sizes, timelines, percentages, benchmarks,
   incidents, or quotes from colleagues. If a number is not known, do not write one.
 - **No personal data and no contact details** — no address, phone, email, date of birth, or
