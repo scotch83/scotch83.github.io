@@ -3,8 +3,8 @@ layout: post
 title: "Idempotency Keys for POST Endpoints: A Retry Needs a Database"
 date: 2026-11-28
 excerpt_separator: <!--more-->
-cover-img: assets/images/idempotency-keys-for-post-endpoints-a-retry-needs.svg
-linkedin-img: assets/images/idempotency-keys-for-post-endpoints-a-retry-needs.png
+cover-img: assets/images/post-idempotency-keys.svg
+linkedin-img: assets/images/post-idempotency-keys.png
 tags: architecture postgresql nodejs webdevelopment
 comments: true
 ---
