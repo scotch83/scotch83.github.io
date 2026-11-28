@@ -223,6 +223,7 @@ jobs:
               -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
               | jq -r '.result.name // "(could not read the account)"' 2>/dev/null || echo "(lookup failed)")
           fi
+          echo "cloudflare account: ${account} (${CLOUDFLARE_ACCOUNT_ID:-none})"
           {
             echo "### Preview"
             echo
