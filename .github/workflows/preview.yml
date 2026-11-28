@@ -32,7 +32,13 @@ name: Preview deploy
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  # Manual runs need a pull request number: everything below is derived from one, and a run
+  # without it would publish a branch called "pr-".
   workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number to build
+        required: true
 
 permissions:
   contents: read
@@ -40,7 +46,7 @@ permissions:
 
 # One preview per pull request: a new push replaces the previous build rather than racing it.
 concurrency:
-  group: preview-${{ github.event.pull_request.number || github.ref }}
+  group: preview-${{ inputs.pr || github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
@@ -53,7 +59,7 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     env:
-      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_NUMBER: ${{ inputs.pr || github.event.pull_request.number }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -93,13 +99,13 @@ jobs:
       - name: Upload the built site
         uses: actions/upload-artifact@v4
         with:
-          name: site-pr-${{ github.event.pull_request.number }}
+          name: site-pr-${{ inputs.pr || github.event.pull_request.number }}
           path: _site
           retention-days: 14
 
       - name: Deploy to Cloudflare Pages
         id: deploy
-        if: env.CLOUDFLARE_API_TOKEN != '' && github.event.pull_request.head.repo.full_name == github.repository
+        if: env.CLOUDFLARE_API_TOKEN != '' && (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository)
         run: |
           set -euo pipefail
           # Projects are created once; the second call fails and is harmless.
@@ -135,7 +141,7 @@ jobs:
           DEPLOYED: ${{ steps.deploy.outputs.deployed }}
           PROTECTED: ${{ steps.access.outputs.protected }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          ARTIFACT: site-pr-${{ github.event.pull_request.number }}
+          ARTIFACT: site-pr-${{ inputs.pr || github.event.pull_request.number }}
           SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
@@ -196,5 +202,5 @@ jobs:
             echo
             echo "- Address: ${{ steps.address.outputs.url }}"
             echo "- Deployed: ${{ steps.deploy.outputs.deployed || 'no' }}"
-            echo "- Artifact: site-pr-${{ github.event.pull_request.number }}"
+            echo "- Artifact: site-pr-${{ inputs.pr || github.event.pull_request.number }}"
           } >> "$GITHUB_STEP_SUMMARY"
