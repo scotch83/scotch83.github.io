@@ -1,2 +1,4 @@
 _site
 .DS_Store
+_config_preview.yml
+_site-preview

@@ -1,0 +1,234 @@
+name: Preview deploy
+
+# Every pull request builds the site and puts it somewhere you can actually click, without
+# publishing the draft to the open internet.
+#
+# Two channels, because they answer different worries:
+#
+#   1. Artifact (always). The built site is uploaded to this run. A ZIP download needs a
+#      GitHub token - an anonymous request gets 401 even for a public repository - so it is
+#      available to you and nobody else. Unzip it and open index.html.
+#
+#   2. Cloudflare Pages (only when the two secrets below exist). A real hosted preview at
+#      https://pr-<number>.<project>.pages.dev. Cloudflare Pages is free, and Cloudflare
+#      Access on the free Zero Trust plan (up to 50 users) can require a login before anyone
+#      sees a preview deployment.
+#
+# What is *not* private: this repository is public, so the pull request already shows the post
+# markdown and the cover. A preview URL keeps the rendered page away from strangers and search
+# engines; it cannot hide content that is already in the diff.
+#
+# Setup for the hosted preview (one-time, ~10 minutes):
+#   1. Create a free Cloudflare account, then a Pages project named below under
+#      Workers & Pages -> Create -> Pages -> "Direct Upload".
+#   2. My Profile -> API Tokens -> Create Token -> "Cloudflare Pages : Edit".
+#   3. Repo -> Settings -> Secrets and variables -> Actions, add:
+#        CLOUDFLARE_API_TOKEN   the token from step 2
+#        CLOUDFLARE_ACCOUNT_ID  from the Cloudflare dashboard URL (or Workers & Pages overview)
+#   4. Pages project -> Settings -> General -> enable "Prevent visitors from accessing preview
+#      deployments" (this is the Access policy), and add yourself to the Zero Trust user list.
+# Until step 3 the workflow still builds and uploads the artifact; it just skips the deploy.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  # Manual runs need a pull request number: everything below is derived from one, and a run
+  # without it would publish a branch called "pr-".
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number to build
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+# One preview per pull request: a new push replaces the previous build rather than racing it.
+concurrency:
+  group: preview-${{ inputs.pr || github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Must match the Pages project name in Cloudflare. The branch alias is derived from it.
+  PREVIEW_PROJECT: artisan-preview
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      PR_NUMBER: ${{ inputs.pr || github.event.pull_request.number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
+          cache-version: 0
+
+      - name: Work out the preview address
+        id: address
+        run: |
+          # The branch alias is predictable before anything is deployed, which matters because
+          # Jekyll bakes site.url into the page (the cover image is lazy-loaded from it).
+          host="pr-${PR_NUMBER}.${PREVIEW_PROJECT}.pages.dev"
+          echo "url=https://${host}" >> "$GITHUB_OUTPUT"
+          echo "host=${host}" >> "$GITHUB_OUTPUT"
+          echo "Preview address will be https://${host}"
+
+      - name: Build for preview
+        env:
+          PREVIEW_URL: ${{ steps.address.outputs.url }}
+        run: |
+          # A second config file layered over _config.yml: same site, different absolute host,
+          # and no baseurl because the preview lives at a domain root.
+          cat > _config_preview.yml <<EOF
+          url: "${PREVIEW_URL}"
+          baseurl: ""
+          EOF
+          bundle exec jekyll build --config _config.yml,_config_preview.yml
+          # Keep every preview out of search engines even if someone guesses the address.
+          printf '/*\n  X-Robots-Tag: noindex, nofollow\n' > _site/_headers
+          printf 'User-agent: *\nDisallow: /\n' > _site/robots.txt
+
+      - name: Upload the built site
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-pr-${{ inputs.pr || github.event.pull_request.number }}
+          path: _site
+          retention-days: 14
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        if: env.CLOUDFLARE_API_TOKEN != '' && (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository)
+        run: |
+          set -euo pipefail
+          # Projects are created once; the second call fails and is harmless.
+          npx --yes wrangler@3 pages project create "$PREVIEW_PROJECT" \
+            --production-branch=main >/dev/null 2>&1 || true
+          npx --yes wrangler@3 pages deploy _site \
+            --project-name="$PREVIEW_PROJECT" \
+            --branch="pr-${PR_NUMBER}" \
+            --commit-dirty=true
+          echo "deployed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Check who can reach the preview
+        id: access
+        if: steps.deploy.outputs.deployed == 'true'
+        env:
+          PREVIEW_URL: ${{ steps.address.outputs.url }}
+        run: |
+          set -euo pipefail
+          # No -L on purpose: Cloudflare Access answers with a 302 to the login page, while an
+          # unprotected preview answers 200. That difference is the whole check.
+          #
+          # A fresh deployment can refuse the first connection, and curl already prints "000"
+          # itself on failure - appending another 000 (as this step first did) produced the
+          # useless verdict "000000". Retry the transport instead of guessing.
+          # Measured: a first deployment took more than 30 seconds to answer on its branch
+          # alias, which is longer than an impatient loop allows. Give it up to ~2.5 minutes.
+          code=000
+          for attempt in $(seq 1 15); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$PREVIEW_URL") || true
+            [ "$code" != "000" ] && break
+            echo "attempt ${attempt}: no response yet, retrying in 10s"
+            sleep 10
+          done
+          echo "preview answered ${code}"
+          case "$code" in
+            200) echo "protected=false" >> "$GITHUB_OUTPUT"; echo "::warning::The preview answered 200 without a login - anyone with the link can read it." ;;
+            30*) echo "protected=true"  >> "$GITHUB_OUTPUT"; echo "Preview is behind Cloudflare Access." ;;
+            *)   echo "protected=unknown" >> "$GITHUB_OUTPUT"; echo "Could not classify the preview response (HTTP $code)." ;;
+          esac
+
+      - name: Comment on the pull request
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIEW_URL: ${{ steps.address.outputs.url }}
+          DEPLOYED: ${{ steps.deploy.outputs.deployed }}
+          PROTECTED: ${{ steps.access.outputs.protected }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ARTIFACT: site-pr-${{ inputs.pr || github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [ "${DEPLOYED:-}" = "true" ]; then
+            hosted="**Preview:** ${PREVIEW_URL}"
+            if [ "${PROTECTED:-}" = "true" ]; then
+              note="Cloudflare Access is in front of this deployment: it asks you to sign in, which works on a phone."
+            else
+              note="**This preview answers without a login.** Anyone who guesses \`pr-${PR_NUMBER}.${PREVIEW_PROJECT}.pages.dev\` can read it. Turn on *Prevent visitors from accessing preview deployments* in the Pages project, or add a Cloudflare Access application for \`*.${PREVIEW_PROJECT}.pages.dev\`."
+            fi
+          else
+            hosted="**Preview:** not hosted - the Cloudflare secrets are not configured, so this run only built the site."
+            note="Add \`CLOUDFLARE_API_TOKEN\` and \`CLOUDFLARE_ACCOUNT_ID\` to the repository secrets to get a clickable preview."
+          fi
+
+          cat > /tmp/preview.md <<EOF
+          <!-- artisan-preview -->
+          ### Site preview
+
+          ${hosted}
+
+          **Download:** [\`${ARTIFACT}\`](${RUN_URL}) on the run page. The ZIP needs a GitHub login to
+          download - an anonymous request is refused even for a public repository - so it is
+          yours only.
+
+          Serve it rather than double-clicking: the site uses root-relative asset paths, so
+          opening the file directly renders unstyled.
+
+          \`\`\`bash
+          unzip ${ARTIFACT}.zip -d preview
+          python3 -m http.server -d preview 8000   # then open http://localhost:8000
+          \`\`\`
+
+          ${note}
+
+          <sub>Built from ${SHA} · replaced on every push to this branch · removed with the run after 14 days.</sub>
+          EOF
+
+          # One pass, no pipe: `head` closing the pipe early would make `set -o pipefail` abort.
+          existing=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100&page=1" \
+            --jq '[.[] | select(.body | startswith("<!-- artisan-preview -->")) | .id][0] // empty')
+
+          if [ -n "${existing}" ]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" \
+              -F body=@/tmp/preview.md >/dev/null
+            echo "Updated preview comment ${existing}"
+          else
+            gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+              -F body=@/tmp/preview.md >/dev/null
+            echo "Posted preview comment"
+          fi
+
+      - name: Summarise
+        if: always()
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # Say WHICH Cloudflare account this landed in. The dashboard hides Pages projects
+          # when you are looking at another account, and "I cannot find it" is the hardest
+          # thing to debug from the outside.
+          # The token holds only Pages:Edit, so it cannot read account metadata - by design.
+          # The id prefix is enough to tell which account this landed in, and it is not a
+          # secret: it is visible in every dashboard URL.
+          account="(name unavailable: the token deliberately has only Pages:Edit)"
+          prefix="${CLOUDFLARE_ACCOUNT_ID:0:6}"
+          echo "cloudflare account id starts with: ${prefix}   [${account}]"
+          echo "If your dashboard URL shows a different id after dash.cloudflare.com/, you are"
+          echo "looking at another account - that is the usual reason a Pages project is invisible."
+          {
+            echo "### Preview"
+            echo
+            echo "- Address: ${{ steps.address.outputs.url }}"
+            echo "- Cloudflare account id starts: \`${prefix}...\` (${account})"
+            echo "- Deployed: ${{ steps.deploy.outputs.deployed || 'no' }}"
+            echo "- Artifact: site-pr-${{ inputs.pr || github.event.pull_request.number }}"
+          } >> "$GITHUB_STEP_SUMMARY"
