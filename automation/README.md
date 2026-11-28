@@ -44,17 +44,24 @@ What happens after the command:
 4. If anything fails, `artisan-publisher · errors` sends the failing node, the reason and a
    link to the execution. A failure is never silent.
 
-**The bot needs its own token.** Telegram allows a single `getUpdates` consumer per bot, and
-`fin-bot · telegram` already polls the approvals bot, so the publisher cannot share it. To
-connect it:
+**It rides on the existing bot.** Telegram allows one `getUpdates` consumer per bot token,
+and `fin-bot · telegram` is already that consumer, so the publisher does not poll Telegram at
+all. `fin-bot · telegram` gained two nodes:
 
-1. In Telegram, talk to `@BotFather`, send `/newbot`, and follow it. Copy the token.
-2. In n8n: **Credentials → Artisan Telegram Bot → Access Token**, paste it, save.
-3. Activate `artisan-publisher · telegram-post`.
-4. Message the new bot `/help`. It should answer with the command list.
+- `Is Artisan Command?` — a single check on `message.text` starting with `/artisan`.
+- `Forward to Artisan` — POSTs the update verbatim to the publisher's n8n webhook and stops.
 
-Until step 3 the workflow stays deactivated: a polling trigger with a placeholder token only
-produces errors.
+Everything that is not an `/artisan` command falls through to `Route Command` and behaves
+exactly as it did before. The forward node is set to continue on error, so a publisher outage
+cannot take the trading bot down with it. Nothing needs configuring: it is already active.
+
+The publisher itself listens on a webhook inside `artisan-publisher · telegram-post`. The
+path is unguessable and the workflow is active, so there is nothing to switch on. If you ever
+rotate the path, update the URL in `Forward to Artisan` to match.
+
+**Why not a second bot.** Two bots would be tidier, but Telegram's single-consumer rule means
+the second one needs its own token from BotFather, and the replies would arrive from a
+different identity than the one you are talking to. One bot, one conversation.
 
 **The Sunday run is optional.** `weekly-post` is the same generation and the same publish, on
 a clock. Deactivate it if you would rather only publish what you ask for.
@@ -222,11 +229,15 @@ can also be run from the n8n UI with a topic, which costs the generation but wri
 
 ## Security notes
 
-- **The Telegram bot accepts exactly one chat.** `Guard & Parse` in
+- **The publisher accepts exactly one chat.** `Guard & Parse` in
   `artisan-publisher · telegram-post` compares both the chat id and the sender id against an
-  allowlist built into the node. Anything else is dropped without a reply, so an unknown
-  chat cannot spend money on generations and does not learn that a publisher is listening.
-  If the bot token ever leaks, the allowlist still holds — but rotate the token anyway.
+  allowlist built into the node. Anything else is dropped without a reply, so a stranger who
+  finds the bot cannot spend money on generations and does not learn that a publisher is
+  listening. This matters more now that the publisher shares a bot with the trading commands:
+  the allowlist is what keeps them apart.
+- **The webhook path is a bearer secret.** `artisan-cmd-<random>` is unguessable, the
+  workflow validates the chat id anyway, and the path is deliberately not written down in this
+  public repository.
 - The artwork is machine-authored and lands in a public repository, so `Validate Cover` in
   n8n runs a guard **before anything is committed**. The rasteriser Action carries the same
   guard as a backstop for the legacy path. Both reject: `<script>`, `<foreignObject>`,
