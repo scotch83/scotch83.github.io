@@ -10,13 +10,56 @@ public.
 
 | Workflow (n8n) | Trigger | What it does |
 |---|---|---|
-| `artisan-publisher · weekly-post` | Sunday 21:00 Europe/Rome | Takes the next topic from `topics.json`, generates a post, opens a pull request |
-| `artisan-publisher · generate` | Called by the above, or manually | The engine: topic in, post + front matter + cover SVG out |
-| `artisan-publisher · topic-planner` | Every 2 months | Tops `queue` back up to ~16 topics and opens a small PR |
+| `artisan-publisher · telegram-post` | a command in Telegram | **The front door.** Writes the post you asked for and opens the pull request |
+| `artisan-publisher · generate` | called by the two above | The engine: topic in, post + front matter + cover out |
+| `artisan-publisher · publish` | called by the two above | Everything that touches GitHub: branch, four commits, pull request, Telegram ping |
+| `artisan-publisher · weekly-post` | Sunday 21:00 Europe/Rome | The scheduled variant: head of `topics.json` in, pull request out |
+| `artisan-publisher · topic-planner` | every 2 months | Tops `queue` back up to ~16 topics and opens a small PR |
+| `artisan-publisher · errors` | any of the above fails | Sends the failing node, the reason and an execution link to Telegram |
 
 Nothing publishes itself. Every run ends in a pull request that you review and merge.
 
-## The weekly run, step by step
+## Publishing on demand, from Telegram
+
+Send a command to the Artisan bot and a pull request appears a few minutes later.
+
+| Command | What it does |
+|---|---|
+| `/artisan <what you want>` | Writes that post. The more specific the request, the better the draft: `/artisan idempotency keys for POST endpoints, why a retry needs a database` |
+| `/artisan next` | Takes the head of `topics.json`, exactly like the Sunday run |
+| `/artisan topic <id>` | A named queued topic; `/artisan list` prints the ids |
+| `/artisan list` | The backlog |
+
+What happens after the command:
+
+1. `Guard & Parse` checks the chat id against the owner allowlist built into the node. Any
+   other chat gets **no reply at all** — not a refusal, so the bot does not advertise itself.
+2. A planner model turns the request into one topic: a title of at most 65 characters, a
+   one-sentence arguable angle, 3–4 tags from the closed vocabulary, and up to three
+   documentation URLs. Only hosts on the documentation allowlist survive; a slug comes back
+   with it and becomes the file name.
+3. The generator writes and fact-checks the post as usual, draws the cover, and `publish`
+   opens the pull request. The chat gets one acknowledgement at the start and the PR link at
+   the end.
+4. If anything fails, `artisan-publisher · errors` sends the failing node, the reason and a
+   link to the execution. A failure is never silent.
+
+**The bot needs its own token.** Telegram allows a single `getUpdates` consumer per bot, and
+`fin-bot · telegram` already polls the approvals bot, so the publisher cannot share it. To
+connect it:
+
+1. In Telegram, talk to `@BotFather`, send `/newbot`, and follow it. Copy the token.
+2. In n8n: **Credentials → Artisan Telegram Bot → Access Token**, paste it, save.
+3. Activate `artisan-publisher · telegram-post`.
+4. Message the new bot `/help`. It should answer with the command list.
+
+Until step 3 the workflow stays deactivated: a polling trigger with a placeholder token only
+produces errors.
+
+**The Sunday run is optional.** `weekly-post` is the same generation and the same publish, on
+a clock. Deactivate it if you would rather only publish what you ask for.
+
+## What a run does, step by step
 
 1. Read `automation/topics.json` and `automation/skills.md` from `main`.
 2. Take the first topic in `queue`.
@@ -160,7 +203,9 @@ to `main`. Delete the workflow once you are happy with the Recraft path.
 
 ## Failure handling
 
-All three workflows report through the shared n8n error workflow, which messages Telegram.
+Every artist workflow points at `artisan-publisher · errors`, which messages the author's
+chat with the failing node, the reason and a link to the execution. (They used to share
+`fin-bot · errors`; a publishing failure should not arrive dressed as a trading alert.)
 The posting rule is strict: **a failure never opens a pull request and never writes to
 `main`, so nothing publishes.** It can, however, leave a branch behind: the run pushes
 `artisan/<date>-<time>` and its commits before it opens the PR. That branch is inert, and
@@ -171,11 +216,17 @@ image because white type sits across the middle. That triggers a single retry wi
 hardened brief; a second failure aborts with an alert rather than publishing an unreadable
 cover.
 
-There is no retry command from Telegram (the bot's single trigger belongs to another
-workflow) — re-run `artisan-publisher · generate` from the n8n UI, or the weekly workflow.
+To retry, just send the command again: every run is independent and gets its own branch.
+If the failure was in the generator rather than the request, `artisan-publisher · generate`
+can also be run from the n8n UI with a topic, which costs the generation but writes nothing.
 
 ## Security notes
 
+- **The Telegram bot accepts exactly one chat.** `Guard & Parse` in
+  `artisan-publisher · telegram-post` compares both the chat id and the sender id against an
+  allowlist built into the node. Anything else is dropped without a reply, so an unknown
+  chat cannot spend money on generations and does not learn that a publisher is listening.
+  If the bot token ever leaks, the allowlist still holds — but rotate the token anyway.
 - The artwork is machine-authored and lands in a public repository, so `Validate Cover` in
   n8n runs a guard **before anything is committed**. The rasteriser Action carries the same
   guard as a backstop for the legacy path. Both reject: `<script>`, `<foreignObject>`,

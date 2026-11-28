@@ -221,6 +221,11 @@ function diagnose(postName, blocks) {
     return ts
       .getPreEmitDiagnostics(program)
       .filter((d) => d.file && path.resolve(d.file.fileName) === path.resolve(file))
+      // A post may import any package: `pg`, `rxjs`, `zod`. The verifier only installs the
+      // common ones, so an unresolvable module is not the post's fault - what matters is that
+      // the post *names* its imports rather than leaning on identifiers from nowhere. Only
+      // "cannot find module" is tolerated; everything else still fails.
+      .filter((d) => d.code !== 2307 && d.code !== 2792 && d.code !== 7016)
       .map((d) => {
         const { line } = d.file.getLineAndCharacterOfPosition(d.start ?? 0);
         return {
