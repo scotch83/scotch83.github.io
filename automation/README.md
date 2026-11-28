@@ -25,7 +25,7 @@ Send a command to the Artisan bot and a pull request appears a few minutes later
 
 | Command | What it does |
 |---|---|
-| `/artisan <what you want>` | Writes that post. The more specific the request, the better the draft: `/artisan idempotency keys for POST endpoints, why a retry needs a database` |
+| `/artisan <a subject>` | Writes that post. A rough subject is enough — the researcher finds the angle: `/artisan postgres performance` |
 | `/artisan next` | Takes the head of `topics.json`, exactly like the Sunday run |
 | `/artisan topic <id>` | A named queued topic; `/artisan list` prints the ids |
 | `/artisan list` | The backlog |
@@ -34,14 +34,28 @@ What happens after the command:
 
 1. `Guard & Parse` checks the chat id against the owner allowlist built into the node. Any
    other chat gets **no reply at all** — not a refusal, so the bot does not advertise itself.
-2. A planner model turns the request into one topic: a title of at most 65 characters, a
-   one-sentence arguable angle, 3–4 tags from the closed vocabulary, and up to three
-   documentation URLs. Only hosts on the documentation allowlist survive; a slug comes back
-   with it and becomes the file name.
-3. The generator writes and fact-checks the post as usual, draws the cover, and `publish`
+2. **It researches.** A small model turns the request into two search queries, which are run
+   against three free sources, each chosen for a different question:
+
+   | Source | Answers |
+   |---|---|
+   | Hacker News (Algolia) | what the industry is arguing about, and when |
+   | Stack Overflow | what people actually get stuck on — the real bug shapes |
+   | dev.to | what the community is writing this month |
+
+   Results are de-duplicated by headline (HN reposts the same story with tracking params) and
+   labelled by age, so the digest is not three copies of a 2016 article. This is what lets
+   `/artisan postgres performance` work: the request only has to name a subject.
+
+3. A planner model turns the request **and the research** into one topic: a title of at most
+   65 characters, a one-sentence arguable angle, 3–4 tags from the closed vocabulary, and up to
+   three documentation URLs. It must name the official reference page for the primary
+   technology; URLs it invents must be on the documentation allowlist, while URLs the research
+   actually returned are trusted as-is.
+4. The generator writes and fact-checks the post as usual, draws the cover, and `publish`
    opens the pull request. The chat gets one acknowledgement at the start and the PR link at
    the end.
-4. If anything fails, `artisan-publisher · errors` sends the failing node, the reason and a
+5. If anything fails, `artisan-publisher · errors` sends the failing node, the reason and a
    link to the execution. A failure is never silent.
 
 **It rides on the existing bot.** Telegram allows one `getUpdates` consumer per bot token,
@@ -121,13 +135,15 @@ Three layers stand between a draft and `main`, and they fail in different ways:
 
 | Layer | What it catches | What it cannot catch |
 |---|---|---|
+| Research | Staleness and blind spots: what is being discussed now, what people actually get stuck on | It finds discussion, not truth. A popular post can be wrong |
 | Ground truth | Versions, deprecations, behaviour, API names — the excerpts fetched from the official docs are the only authority the writer gets | A topic with no `sources` falls back to "make no version-specific claim", which is weaker |
 | Fact-check pass | Invented APIs and imports, code that cannot compile, unsupported version claims, invented metrics, fabricated incidents | It is a model too. It can miss something, and it can be argued out of a finding |
 | `verify-code.mjs` | Anything that does not parse or type-check, and any identifier the post never declares | Whether the sample is a *good* example, and template-level Angular errors |
 
-They run in that order, cheapest first: the fact-check is a ~$0.002 DeepSeek call, and the
-type check costs CI minutes. Neither is a proof. The honest summary is: the post is checked
-against primary sources and it compiles, and a human still reads it in the pull request.
+They run in that order, cheapest first: the two research planner calls are ~$0.001 each, the
+fact-check is a ~$0.002 DeepSeek call, and the type check costs CI minutes. None is a proof.
+The honest summary is: the post is researched, checked against primary sources, and it
+compiles — and a human still reads it in the pull request.
 
 **Adding sources to a topic.** Put the documentation URLs on the topic object:
 
