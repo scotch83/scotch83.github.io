@@ -138,7 +138,15 @@ jobs:
 
           **Download:** [\`${ARTIFACT}\`](${RUN_URL}) on the run page. The ZIP needs a GitHub login to
           download - an anonymous request is refused even for a public repository - so it is
-          yours only. Unzip it and open \`index.html\`.
+          yours only.
+
+          Serve it rather than double-clicking: the site uses root-relative asset paths, so
+          opening the file directly renders unstyled.
+
+          \`\`\`bash
+          unzip ${ARTIFACT}.zip -d preview
+          python3 -m http.server -d preview 8000   # then open http://localhost:8000
+          \`\`\`
 
           ${note}
 
