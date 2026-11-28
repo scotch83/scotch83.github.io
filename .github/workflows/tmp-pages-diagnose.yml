@@ -21,6 +21,18 @@ jobs:
             echo "--- $u"
             curl -sS -o /dev/null -w '  http=%{http_code} ip=%{remote_ip}\n' --max-time 20 "$u" 2>&1 | tail -3 || echo "  curl exit $?"
           done
+      - name: Project keys
+        run: |
+          curl -sS "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/artisan-preview" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            | python3 -c "
+import sys,json
+r=(json.load(sys.stdin).get('result') or {})
+print('all keys:', sorted(r.keys()))
+for k,v in sorted(r.items()):
+    if any(t in k.lower() for t in ('preview','access','deployment_settings','config')):
+        print(f'  {k} = {json.dumps(v)[:200]}')
+"
       - name: Project via API
         run: |
           echo "--- project"
