@@ -126,7 +126,18 @@ jobs:
           set -euo pipefail
           # No -L on purpose: Cloudflare Access answers with a 302 to the login page, while an
           # unprotected preview answers 200. That difference is the whole check.
-          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$PREVIEW_URL" || echo 000)
+          #
+          # A fresh deployment can refuse the first connection, and curl already prints "000"
+          # itself on failure - appending another 000 (as this step first did) produced the
+          # useless verdict "000000". Retry the transport instead of guessing.
+          code=000
+          for attempt in 1 2 3 4 5 6; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$PREVIEW_URL") || true
+            [ "$code" != "000" ] && break
+            echo "attempt ${attempt}: no response yet, retrying in 5s"
+            sleep 5
+          done
+          echo "preview answered ${code}"
           case "$code" in
             200) echo "protected=false" >> "$GITHUB_OUTPUT"; echo "::warning::The preview answered 200 without a login - anyone with the link can read it." ;;
             30*) echo "protected=true"  >> "$GITHUB_OUTPUT"; echo "Preview is behind Cloudflare Access." ;;
