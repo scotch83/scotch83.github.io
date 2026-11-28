@@ -111,12 +111,29 @@ jobs:
             --commit-dirty=true
           echo "deployed=true" >> "$GITHUB_OUTPUT"
 
+      - name: Check who can reach the preview
+        id: access
+        if: steps.deploy.outputs.deployed == 'true'
+        env:
+          PREVIEW_URL: ${{ steps.address.outputs.url }}
+        run: |
+          set -euo pipefail
+          # No -L on purpose: Cloudflare Access answers with a 302 to the login page, while an
+          # unprotected preview answers 200. That difference is the whole check.
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$PREVIEW_URL" || echo 000)
+          case "$code" in
+            200) echo "protected=false" >> "$GITHUB_OUTPUT"; echo "::warning::The preview answered 200 without a login - anyone with the link can read it." ;;
+            30*) echo "protected=true"  >> "$GITHUB_OUTPUT"; echo "Preview is behind Cloudflare Access." ;;
+            *)   echo "protected=unknown" >> "$GITHUB_OUTPUT"; echo "Could not classify the preview response (HTTP $code)." ;;
+          esac
+
       - name: Comment on the pull request
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
           PREVIEW_URL: ${{ steps.address.outputs.url }}
           DEPLOYED: ${{ steps.deploy.outputs.deployed }}
+          PROTECTED: ${{ steps.access.outputs.protected }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           ARTIFACT: site-pr-${{ github.event.pull_request.number }}
           SHA: ${{ github.event.pull_request.head.sha }}
@@ -124,7 +141,11 @@ jobs:
           set -euo pipefail
           if [ "${DEPLOYED:-}" = "true" ]; then
             hosted="**Preview:** ${PREVIEW_URL}"
-            note="Cloudflare Access protects preview deployments, so this asks you to sign in. If it opens without a login, the Access policy in the Pages project is not enabled yet."
+            if [ "${PROTECTED:-}" = "true" ]; then
+              note="Cloudflare Access is in front of this deployment: it asks you to sign in, which works on a phone."
+            else
+              note="**This preview answers without a login.** Anyone who guesses \`pr-${PR_NUMBER}.${PREVIEW_PROJECT}.pages.dev\` can read it. Turn on *Prevent visitors from accessing preview deployments* in the Pages project, or add a Cloudflare Access application for \`*.${PREVIEW_PROJECT}.pages.dev\`."
+            fi
           else
             hosted="**Preview:** not hosted - the Cloudflare secrets are not configured, so this run only built the site."
             note="Add \`CLOUDFLARE_API_TOKEN\` and \`CLOUDFLARE_ACCOUNT_ID\` to the repository secrets to get a clickable preview."
