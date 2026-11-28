@@ -209,11 +209,25 @@ jobs:
 
       - name: Summarise
         if: always()
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          # Say WHICH Cloudflare account this landed in. The dashboard hides Pages projects
+          # when you are looking at another account, and "I cannot find it" is the hardest
+          # thing to debug from the outside.
+          account="(unknown - no token)"
+          if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            account=$(curl -s --max-time 15 \
+              "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}" \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              | jq -r '.result.name // "(could not read the account)"' 2>/dev/null || echo "(lookup failed)")
+          fi
           {
             echo "### Preview"
             echo
             echo "- Address: ${{ steps.address.outputs.url }}"
+            echo "- Cloudflare account: **${account}** \`${CLOUDFLARE_ACCOUNT_ID:-none}\`"
             echo "- Deployed: ${{ steps.deploy.outputs.deployed || 'no' }}"
             echo "- Artifact: site-pr-${{ inputs.pr || github.event.pull_request.number }}"
           } >> "$GITHUB_STEP_SUMMARY"
