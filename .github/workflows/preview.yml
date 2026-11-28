@@ -130,12 +130,14 @@ jobs:
           # A fresh deployment can refuse the first connection, and curl already prints "000"
           # itself on failure - appending another 000 (as this step first did) produced the
           # useless verdict "000000". Retry the transport instead of guessing.
+          # Measured: a first deployment took more than 30 seconds to answer on its branch
+          # alias, which is longer than an impatient loop allows. Give it up to ~2.5 minutes.
           code=000
-          for attempt in 1 2 3 4 5 6; do
+          for attempt in $(seq 1 15); do
             code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$PREVIEW_URL") || true
             [ "$code" != "000" ] && break
-            echo "attempt ${attempt}: no response yet, retrying in 5s"
-            sleep 5
+            echo "attempt ${attempt}: no response yet, retrying in 10s"
+            sleep 10
           done
           echo "preview answered ${code}"
           case "$code" in
