@@ -216,19 +216,19 @@ jobs:
           # Say WHICH Cloudflare account this landed in. The dashboard hides Pages projects
           # when you are looking at another account, and "I cannot find it" is the hardest
           # thing to debug from the outside.
-          account="(unknown - no token)"
-          if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
-            account=$(curl -s --max-time 15 \
-              "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}" \
-              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-              | jq -r '.result.name // "(could not read the account)"' 2>/dev/null || echo "(lookup failed)")
-          fi
-          echo "cloudflare account: ${account} (${CLOUDFLARE_ACCOUNT_ID:-none})"
+          # The token holds only Pages:Edit, so it cannot read account metadata - by design.
+          # The id prefix is enough to tell which account this landed in, and it is not a
+          # secret: it is visible in every dashboard URL.
+          account="(name unavailable: the token deliberately has only Pages:Edit)"
+          prefix="${CLOUDFLARE_ACCOUNT_ID:0:6}"
+          echo "cloudflare account id starts with: ${prefix}   [${account}]"
+          echo "If your dashboard URL shows a different id after dash.cloudflare.com/, you are"
+          echo "looking at another account - that is the usual reason a Pages project is invisible."
           {
             echo "### Preview"
             echo
             echo "- Address: ${{ steps.address.outputs.url }}"
-            echo "- Cloudflare account: **${account}** \`${CLOUDFLARE_ACCOUNT_ID:-none}\`"
+            echo "- Cloudflare account id starts: \`${prefix}...\` (${account})"
             echo "- Deployed: ${{ steps.deploy.outputs.deployed || 'no' }}"
             echo "- Artifact: site-pr-${{ inputs.pr || github.event.pull_request.number }}"
           } >> "$GITHUB_STEP_SUMMARY"
